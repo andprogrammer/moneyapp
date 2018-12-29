@@ -32,7 +32,7 @@ public class UserService {
 
     public User deleteUser(String id) {
         users.remove(id);
-        return null;
+        return null;    //TODO change
     }
 
     private void failIfInvalid(String name, String email) {
