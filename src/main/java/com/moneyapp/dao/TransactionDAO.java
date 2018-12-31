@@ -1,5 +1,6 @@
 package com.moneyapp.dao;
 
+import com.moneyapp.exception.CustomException;
 import com.moneyapp.model.Account;
 import com.moneyapp.model.Transaction;
 
@@ -13,7 +14,7 @@ public class TransactionDAO {
         this.accountDAO = accountDAO;
     }
 
-    public int transfer(Transaction transaction) {
+    public int transfer(Transaction transaction) throws CustomException {
         Account fromAccount = accountDAO.getAccount(transaction.getFromAccountId());
         if (fromAccount == null) {
             throw new IllegalArgumentException("No account with id '" + fromAccount.getId() + "' found");

@@ -7,87 +7,86 @@ import com.moneyapp.utils.JsonUtil;
 
 import java.math.BigDecimal;
 
+import static com.moneyapp.utils.JsonUtil.FAILED_RESPONSE;
 import static spark.Spark.*;
+
+import static com.moneyapp.utils.Utils.checkBalanceLessThanOrEqualZero;
 
 
 public class AccountService {
 
     public AccountService(final AccountDAO accountDAO) {
 
-        get("/account/all", (req, res) -> accountDAO.getAllAccounts(), JsonUtil.json());
+        get("/account/all", (request, response) -> accountDAO.getAllAccounts(), JsonUtil.json());
 
-        get("/account/:id", (req, res) -> {
-            String id = req.params(":id");
+        get("/account/:id", (request, response) -> {
+            String id = request.params(":id");
             Account account = accountDAO.getAccount(id);
             if (account != null) {
                 return account;
             }
-            res.status(400);
+            response.status(FAILED_RESPONSE);
             return new ResponseError("No account with id '%s' found", id);
         }, JsonUtil.json());
 
-        put("/account/create", (req, res) -> accountDAO.createAccount(
-                req.queryParams("username"),
-                new BigDecimal(req.queryParams("balance")),
-                req.queryParams("currencycode")
-        ), JsonUtil.json());
+        put("/account/create", (requestuest, response) -> {
+            Account account = accountDAO.createAccount(
+                    requestuest.queryParams("username"),
+                    new BigDecimal(requestuest.queryParams("balance")),
+                    requestuest.queryParams("currencycode"));
+            if (account != null)
+                return account;
+            response.status(FAILED_RESPONSE);
+            return new ResponseError("Error. Account not added");
+        }, JsonUtil.json());
 
-        get("/account/:id/balance", (req, res) -> {
-            String id = req.params(":id");
+        get("/account/:id/balance", (request, response) -> {
+            String id = request.params(":id");
             BigDecimal balance = accountDAO.getBalance(id);
             if (balance != null) {
                 return balance;
             }
-            res.status(400);
+            response.status(FAILED_RESPONSE);
             return new ResponseError("No account with id '%s' found", id);
         }, JsonUtil.json());
 
-        delete("/account/:id", (req, res) -> accountDAO.deleteAccount(
-                req.params(":id")
-        ), JsonUtil.json());
-
-        put("/account/:id/withdraw/:amount", (req, res) -> {
-            BigDecimal amount = new BigDecimal(req.params(":amount"));
-
-            if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-                //TODO throw exception
-                //throw new WebApplicationException("Invalid Deposit amount", Response.Status.BAD_REQUEST);
+        delete("/account/:id", (request, response) -> {
+            int responseStatus = accountDAO.deleteAccount(
+                    request.params(":id"));
+            if (0 != responseStatus) {
+                response.status(FAILED_RESPONSE);
+                return new ResponseError("Error. Account not deleted");
             }
-
-            BigDecimal delta = amount.negate();
-            String id = req.params(":id");
-            Account account = accountDAO.updateAccountBalance(id, delta);
-            if (account != null) {
-                return account;
-            }
-            res.status(400);
-            return new ResponseError("No account with id '%s' found", id);
+            return 0;
         }, JsonUtil.json());
 
-        put("/account/:id/deposit/:amount", (req, res) -> {
-            BigDecimal amount = new BigDecimal(req.params(":amount"));
-
-            if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-                //TODO throw exception
-                //throw new WebApplicationException("Invalid Deposit amount", Response.Status.BAD_REQUEST);
-            }
-
-            String id = req.params(":id");
-            Account account = accountDAO.updateAccountBalance(id, amount);
-            if (account != null) {
-                return account;
-            }
-            res.status(400);
-            return new ResponseError("No account with id '%s' found", id);
+        put("/account/:id/withdraw/:amount", (request, response) -> {
+            BigDecimal amount = new BigDecimal(request.params(":amount"));
+            checkBalanceLessThanOrEqualZero(amount);
+            BigDecimal amountDelta = amount.negate();
+            String accountId = request.params(":id");
+            return accountDAO.updateAccountBalance(accountId, amountDelta);
         }, JsonUtil.json());
 
-        after((req, res) -> {
-            res.type("application/json");
+        put("/account/:id/deposit/:amount", (request, response) -> {
+            BigDecimal amount = new BigDecimal(request.params(":amount"));
+            checkBalanceLessThanOrEqualZero(amount);
+            String accountId = request.params(":id");
+            return accountDAO.updateAccountBalance(accountId, amount);
+        }, JsonUtil.json());
+
+        after((request, response) -> {
+            response.type("application/json");
         });
 
-        exception(IllegalArgumentException.class, (e, req, res) -> {
-            res.status(400);
-            res.body(JsonUtil.toJson(new ResponseError(e)));
+        exception(IllegalArgumentException.class, (exception, request, response) -> {
+            response.status(FAILED_RESPONSE);
+            response.body(JsonUtil.toJson(new ResponseError(exception)));
+        });
+
+        exception(IllegalArgumentException.class, (exception, request, response) -> {
+            response.status(FAILED_RESPONSE);
+            response.body(JsonUtil.toJson(new ResponseError(exception)));
         });
     }
 }

@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.moneyapp.utils.Utils.checkIdConstraint;
+
+
 public class UserDAO {
 
     private Map<String, User> users = new HashMap<>();
@@ -18,6 +21,7 @@ public class UserDAO {
     }
 
     public User getUser(String id) throws CustomException {
+        checkIdConstraint(id);
         checkUsersConstraint();
         if(!users.containsKey(id))
             throw new CustomException("User with id " + id + " not found");
@@ -33,6 +37,7 @@ public class UserDAO {
     }
 
     public User updateUser(String id, String name, String email) throws CustomException {
+        checkIdConstraint(id);
         User user = getUser(id);
         user.setName(name);
         user.setEmail(email);
@@ -45,6 +50,7 @@ public class UserDAO {
     }
 
     public int deleteUser(String id) throws CustomException {
+        checkIdConstraint(id);
         checkUsersConstraint();
         users.remove(id);
         return 0;

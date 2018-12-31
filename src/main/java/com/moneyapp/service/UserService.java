@@ -28,8 +28,7 @@ public class UserService {
         put("/user/create", (request, response) -> {
             User user = userDAO.createUser(
                     request.queryParams("name"),
-                    request.queryParams("email")
-            );
+                    request.queryParams("email"));
             if (user != null)
                 return user;
             response.status(FAILED_RESPONSE);
@@ -40,8 +39,7 @@ public class UserService {
             User user = userDAO.updateUser(
                     request.params(":id"),
                     request.queryParams("name"),
-                    request.queryParams("email")
-            );
+                    request.queryParams("email"));
             if (user != null)
                 return user;
             response.status(FAILED_RESPONSE);
@@ -50,8 +48,7 @@ public class UserService {
 
         delete("/user/:id", (request, response) -> {
             int responseStatus = userDAO.deleteUser(
-                    request.params(":id")
-            );
+                    request.params(":id"));
             if (0 != responseStatus) {
                 response.status(FAILED_RESPONSE);
                 return new ResponseError("Error. User not deleted");

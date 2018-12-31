@@ -1,7 +1,11 @@
 package com.moneyapp.model;
 
+import com.moneyapp.exception.CustomException;
+
 import java.math.BigDecimal;
 import java.util.UUID;
+
+import static com.moneyapp.utils.Utils.checkBalanceLessThanZero;
 
 
 public class Account {
@@ -46,11 +50,8 @@ public class Account {
         return currencyCode;
     }
 
-    public void setBalance(BigDecimal balance) {//TODO remove setBalance (no public access)
-        if (balance.compareTo(BigDecimal.ZERO) < 0) {
-            //TODO throw exception
-            //throw new CustomException("Not sufficient Fund for account: " + accountId);
-        }
+    public void setBalance(BigDecimal balance) throws CustomException {
+        checkBalanceLessThanZero(balance);
         this.balance = balance;
     }
 
