@@ -10,13 +10,11 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 
+import static com.endpoints.moneyapp.utils.Utils.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertNotNull;
 import static spark.Spark.awaitInitialization;
 import static spark.Spark.stop;
-
-import static com.endpoints.moneyapp.utils.Utils.*;
 
 
 public class AccountServiceTestSuite {
@@ -65,20 +63,26 @@ public class AccountServiceTestSuite {
 
     @Test
     public void testGetAccount() {
-        String accountId = createAccount();
+        String name = "Andrzej";
+        String balance = "1000";
+        String currencyCode = "USD";
+        String accountId = createNewAccount(name, balance, currencyCode);
         Response response = request("GET", "/account/" + accountId);
         JSONObject json = new JSONObject(response.body);
-        assertJSON(response, json, "1000");
+        assertJSON(response, json, name, balance, currencyCode);
     }
 
     @Test
     public void testCreateAccount() {
-        createAccount();
+        createNewAccount("Andrzej", "1000", "USD");
     }
 
     @Test
     public void testGetAccountBalance() {
-        String accountId = createAccount();
+        String name = "Andrzej";
+        String balance = "1000";
+        String currencyCode = "USD";
+        String accountId = createNewAccount(name, balance, currencyCode);
         Response response = request("GET", "/account/" + accountId + "/balance");
         assertThat(SUCCESS_RESPONSE, equalTo(response.status));
         assertThat(response.body, equalTo("1000"));
@@ -86,27 +90,31 @@ public class AccountServiceTestSuite {
 
     @Test
     public void testDeleteAccount() {
-        String accountId = createAccount();
+        String accountId = createNewAccount("Andrzej", "1000", "USD");
         Response response = request("DELETE", "/account/" + accountId);
         assertThat(SUCCESS_RESPONSE, equalTo(response.status));
     }
 
     @Test
     public void testAccountWithdraw() {
-        String accountId = createAccount();
+        String name = "Andrzej";
+        String currencyCode = "USD";
+        String accountId = createNewAccount(name, "1000", currencyCode);
         String amount = "128";
         Response response = request("PUT", "/account/" + accountId + "/withdraw/" + amount);
         JSONObject json = new JSONObject(response.body);
-        assertJSON(response, json, "872");
+        assertJSON(response, json, name, "872", currencyCode);
     }
 
     @Test
     public void testAccountDeposit() {
-        String accountId = createAccount();
+        String name = "Andrzej";
+        String currencyCode = "USD";
+        String accountId = createNewAccount(name, "1000", currencyCode);
         String amount = "256";
         Response response = request("PUT", "/account/" + accountId + "/deposit/" + amount);
         JSONObject json = new JSONObject(response.body);
-        assertJSON(response, json, "1256");
+        assertJSON(response, json, name, "1256", currencyCode);
     }
 
     private void checkResults(String accountId, String accountUserName, BigDecimal accountBalance, String currencyCode, JSONObject firstJSONObject, JSONObject secondJSONObject) {
@@ -114,20 +122,5 @@ public class AccountServiceTestSuite {
         assertAnyOf(accountUserName, new Pair<>(firstJSONObject.getString("userName"), secondJSONObject.getString("userName")));
         assertAnyOf(accountBalance, new Pair<>(firstJSONObject.getBigDecimal("balance"), secondJSONObject.getBigDecimal("balance")));
         assertAnyOf(currencyCode, new Pair<>(firstJSONObject.getString("currencyCode"), secondJSONObject.getString("currencyCode")));
-    }
-
-    private String createAccount() {
-        Response response = request("PUT", "/account/create?username=Andrzej&balance=1000&currencycode=USD");
-        JSONObject json = new JSONObject(response.body);
-        assertJSON(response, json, "1000");
-        return json.getString("id");
-    }
-
-    private void assertJSON(Response response, JSONObject json, String balance) {
-        assertThat(SUCCESS_RESPONSE, equalTo(response.status));
-        assertNotNull(json.getString("id"));
-        assertThat("Andrzej", equalTo(json.getString("userName")));
-        assertThat(new BigDecimal(balance), equalTo(json.getBigDecimal("balance")));
-        assertThat("USD", equalTo(json.getString("currencyCode")));
     }
 }

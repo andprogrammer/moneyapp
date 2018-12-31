@@ -12,7 +12,10 @@ public class Application {
     public static final AccountDAO ACCOUNT_SERVICE = new AccountDAO();
 
     public static void main(String[] args) {
+        runApplication();
+    }
 
+    private static void runApplication() {
         new UserService(new UserDAO());
         new AccountService(ACCOUNT_SERVICE);
         new TransactionService(new TransactionDAO(ACCOUNT_SERVICE));

@@ -1,14 +1,17 @@
 package com.endpoints.moneyapp.utils;
 
+import org.json.JSONObject;
 import spark.utils.IOUtils;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 
@@ -47,6 +50,21 @@ public class Utils {
             this.status = status;
             this.body = body;
         }
+    }
+
+    public static String createNewAccount(final String name, final String balance, final String currencyCode) {
+        Utils.Response response = request("PUT", "/account/create?username=" + name + "&balance=" + balance + "&currencycode=" + currencyCode);
+        JSONObject json = new JSONObject(response.body);
+        assertJSON(response, json, name, balance, currencyCode);
+        return json.getString("id");
+    }
+
+    public static void assertJSON(Utils.Response response, JSONObject json, String name, String balance, String currencyCode) {
+        assertThat(SUCCESS_RESPONSE, equalTo(response.status));
+        assertNotNull(json.getString("id"));
+        assertThat(name, equalTo(json.getString("userName")));
+        assertThat(new BigDecimal(balance), equalTo(json.getBigDecimal("balance")));
+        assertThat(currencyCode, equalTo(json.getString("currencyCode")));
     }
 
     public static class Pair<L, R> {
