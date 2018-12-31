@@ -1,3 +1,5 @@
+package com.endpoints.moneyapp.utils;
+
 import spark.utils.IOUtils;
 
 import java.io.IOException;
@@ -8,6 +10,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.fail;
+
 
 public class Utils {
 

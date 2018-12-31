@@ -1,4 +1,4 @@
-package com.moneyapp;
+package com.moneyapp.exception;
 
 public class ResponseError {
 

@@ -1,3 +1,5 @@
+package com.endpoints.moneyapp;
+
 import com.moneyapp.dao.UserDAO;
 import com.moneyapp.service.UserService;
 import org.json.JSONArray;
@@ -11,6 +13,8 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertNotNull;
 import static spark.Spark.awaitInitialization;
 import static spark.Spark.stop;
+
+import static com.endpoints.moneyapp.utils.Utils.*;
 
 
 public class UserServiceTestSuite {
@@ -30,17 +34,17 @@ public class UserServiceTestSuite {
     public void testGetAllUsers() {
         String firstUserName = "Andrzej";
         String firstUserEmail = "test@gmail.com";
-        Utils.Response response = Utils.request("PUT", "/user/create?name=" + firstUserName + "&email=" + firstUserEmail);
+        Response response = request("PUT", "/user/create?name=" + firstUserName + "&email=" + firstUserEmail);
         JSONObject json = new JSONObject(response.body);
         String firstUserId = json.getString("id");
 
         String secondUserName = "Tom";
         String secondUserEmail = "tom@gmail.com";
-        response = Utils.request("PUT", "/user/create?name=" + secondUserName + "&email=" + secondUserEmail);
+        response = request("PUT", "/user/create?name=" + secondUserName + "&email=" + secondUserEmail);
         json = new JSONObject(response.body);
         String secondUserId = json.getString("id");
 
-        response = Utils.request("GET", "/user/all");
+        response = request("GET", "/user/all");
         JSONArray jsonarray = new JSONArray(response.body);
 
         JSONObject firstJSONObject = jsonarray.getJSONObject(0);
@@ -53,7 +57,7 @@ public class UserServiceTestSuite {
     @Test
     public void testGetUser() {
         String userId = createUser();
-        Utils.Response response = Utils.request("GET", "/user/" + userId);
+        Response response = request("GET", "/user/" + userId);
         JSONObject json = new JSONObject(response.body);
         assertJSON(response, json, "Andrzej", "test@gmail.com");
     }
@@ -66,7 +70,7 @@ public class UserServiceTestSuite {
     @Test
     public void testUpdateUser() {
         String userId = createUser();
-        Utils.Response response = Utils.request("POST", "/user/" + userId + "?name=Tom&email=tom@yahoo.com");
+        Response response = request("POST", "/user/" + userId + "?name=Tom&email=tom@yahoo.com");
         JSONObject json = new JSONObject(response.body);
         assertJSON(response, json, "Tom", "tom@yahoo.com");
     }
@@ -74,27 +78,27 @@ public class UserServiceTestSuite {
     @Test
     public void testDeleteUser() {
         String userId = createUser();
-        Utils.Response response = Utils.request("DELETE", "/user/" + userId);
-        assertThat(Utils.SUCCESS_RESPONSE, equalTo(response.status));
+        Response response = request("DELETE", "/user/" + userId);
+        assertThat(SUCCESS_RESPONSE, equalTo(response.status));
     }
 
     private String createUser() {
-        Utils.Response response = Utils.request("PUT", "/user/create?name=Andrzej&email=test@gmail.com");
+        Response response = request("PUT", "/user/create?name=Andrzej&email=test@gmail.com");
         JSONObject json = new JSONObject(response.body);
         assertJSON(response, json, "Andrzej", "test@gmail.com");
         return json.getString("id");
     }
 
-    private void assertJSON(Utils.Response response, JSONObject json, String name, String email) {
-        assertThat(Utils.SUCCESS_RESPONSE, equalTo(response.status));
+    private void assertJSON(Response response, JSONObject json, String name, String email) {
+        assertThat(SUCCESS_RESPONSE, equalTo(response.status));
         assertNotNull(json.get("id"));
         assertThat(name, equalTo(json.getString("name")));
         assertThat(email, equalTo(json.getString("email")));
     }
 
     private void assertResults(String firstUserId, String firstUserName, String firstUserEmail, JSONObject firstJSONObject, JSONObject secondJSONObject) {
-        Utils.assertAnyOf(firstUserId, new Utils.Pair<>(firstJSONObject.getString("id"), secondJSONObject.getString("id")));
-        Utils.assertAnyOf(firstUserName, new Utils.Pair<>(firstJSONObject.getString("name"), secondJSONObject.getString("name")));
-        Utils.assertAnyOf(firstUserEmail, new Utils.Pair<>(firstJSONObject.getString("email"), secondJSONObject.getString("email")));
+        assertAnyOf(firstUserId, new Pair<>(firstJSONObject.getString("id"), secondJSONObject.getString("id")));
+        assertAnyOf(firstUserName, new Pair<>(firstJSONObject.getString("name"), secondJSONObject.getString("name")));
+        assertAnyOf(firstUserEmail, new Pair<>(firstJSONObject.getString("email"), secondJSONObject.getString("email")));
     }
 }

@@ -1,6 +1,6 @@
 package com.moneyapp.service;
 
-import com.moneyapp.ResponseError;
+import com.moneyapp.exception.ResponseError;
 import com.moneyapp.dao.TransactionDAO;
 import com.moneyapp.model.Transaction;
 import com.moneyapp.utils.JsonUtil;

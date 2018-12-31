@@ -39,6 +39,21 @@ public class User {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        User user = (User) o;
+        if (id != user.id)
+            return false;
+        if (!name.equals(user.name))
+            return false;
+        return email.equals(user.email);
+    }
+
+    @Override
     public String toString() {
         return new StringBuffer().append(getName()).append(getEmail()).toString();
     }

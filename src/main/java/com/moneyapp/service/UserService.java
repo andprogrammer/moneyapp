@@ -1,11 +1,12 @@
 package com.moneyapp.service;
 
-import com.moneyapp.ResponseError;
 import com.moneyapp.dao.UserDAO;
+import com.moneyapp.exception.CustomException;
+import com.moneyapp.exception.ResponseError;
 import com.moneyapp.model.User;
 import com.moneyapp.utils.JsonUtil;
-import spark.Spark;
 
+import static com.moneyapp.utils.JsonUtil.FAILED_RESPONSE;
 import static spark.Spark.*;
 
 
@@ -13,40 +14,63 @@ public class UserService {
 
     public UserService(final UserDAO userDAO) {
 
-        Spark.get("/user/all", (req, res) -> userDAO.getAllUsers(), JsonUtil.json());
+        get("/user/all", (request, response) -> userDAO.getAllUsers(), JsonUtil.json());
 
-        get("/user/:id", (req, res) -> {
-            String id = req.params(":id");
+        get("/user/:id", (request, response) -> {
+            String id = request.params(":id");
             User user = userDAO.getUser(id);
-            if (user != null) {
+            if (user != null)
                 return user;
-            }
-            res.status(400);
-            return new ResponseError("No user with id '%s' found", id);
+            response.status(FAILED_RESPONSE);
+            return new ResponseError("User with id '%s' found", id);
         }, JsonUtil.json());
 
-        put("/user/create", (req, res) -> userDAO.createUser(
-                req.queryParams("name"),
-                req.queryParams("email")
-        ), JsonUtil.json());
+        put("/user/create", (request, response) -> {
+            User user = userDAO.createUser(
+                    request.queryParams("name"),
+                    request.queryParams("email")
+            );
+            if (user != null)
+                return user;
+            response.status(FAILED_RESPONSE);
+            return new ResponseError("Error. User not added");
+        }, JsonUtil.json());
 
-        post("/user/:id", (req, res) -> userDAO.updateUser(
-                req.params(":id"),
-                req.queryParams("name"),
-                req.queryParams("email")
-        ), JsonUtil.json());
+        post("/user/:id", (request, response) -> {
+            User user = userDAO.updateUser(
+                    request.params(":id"),
+                    request.queryParams("name"),
+                    request.queryParams("email")
+            );
+            if (user != null)
+                return user;
+            response.status(FAILED_RESPONSE);
+            return new ResponseError("Error. User not added");
+        }, JsonUtil.json());
 
-        delete("/user/:id", (req, res) -> userDAO.deleteUser(
-                req.params(":id")
-        ), JsonUtil.json());
+        delete("/user/:id", (request, response) -> {
+            int responseStatus = userDAO.deleteUser(
+                    request.params(":id")
+            );
+            if (0 != responseStatus) {
+                response.status(FAILED_RESPONSE);
+                return new ResponseError("Error. User not deleted");
+            }
+            return 0;
+        }, JsonUtil.json());
 
-        after((req, res) -> {
-            res.type("application/json");
+        after((request, response) -> {
+            response.type("application/json");
         });
 
-        exception(IllegalArgumentException.class, (e, req, res) -> {
-            res.status(400);
-            res.body(JsonUtil.toJson(new ResponseError(e)));
+        exception(IllegalArgumentException.class, (exception, request, response) -> {
+            response.status(FAILED_RESPONSE);
+            response.body(JsonUtil.toJson(new ResponseError(exception)));
+        });
+
+        exception(CustomException.class, (exception, request, response) -> {
+            response.status(FAILED_RESPONSE);
+            response.body(JsonUtil.toJson(new ResponseError(exception)));
         });
     }
 }
