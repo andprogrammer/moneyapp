@@ -1,15 +1,24 @@
+package com.moneyapp.service;
+
+import com.moneyapp.ResponseError;
+import com.moneyapp.dao.TransactionDAO;
+import com.moneyapp.model.Transaction;
+import com.moneyapp.utils.JsonUtil;
+import spark.Spark;
+
 import java.math.BigDecimal;
 
-import static spark.Spark.*;
+import static spark.Spark.after;
+import static spark.Spark.exception;
 
-public class TransactionController {
+public class TransactionService {
 
-    public TransactionController(final TransactionService transactionService) {
+    public TransactionService(final TransactionDAO transactionDAO) {
 
-        post("/transaction/:from_id/:to_id/:amount/:currency_code", (req, res) -> {
+        Spark.post("/transaction/:from_id/:to_id/:amount/:currency_code", (req, res) -> {
             BigDecimal amount = new BigDecimal(req.params(":amount"));
 
-            if (amount.compareTo(BigDecimal.ZERO) <= 0){
+            if (amount.compareTo(BigDecimal.ZERO) <= 0) {
                 //TODO throw exception
                 //throw new WebApplicationException("Invalid Deposit amount", Response.Status.BAD_REQUEST);
             }
@@ -20,7 +29,7 @@ public class TransactionController {
 
             Transaction transaction = new Transaction(fromAccountId, toAccountId, amount, currencyCode);
 
-            int response = transactionService.transfer(transaction);
+            int response = transactionDAO.transfer(transaction);
             if (response == 0) {
                 return "SUCCESS";
             }

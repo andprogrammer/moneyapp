@@ -1,3 +1,5 @@
+package com.moneyapp.model;
+
 import java.util.UUID;
 
 public class User {
@@ -36,4 +38,8 @@ public class User {
         this.email = email;
     }
 
+    @Override
+    public String toString() {
+        return new StringBuffer().append(getName()).append(getEmail()).toString();
+    }
 }

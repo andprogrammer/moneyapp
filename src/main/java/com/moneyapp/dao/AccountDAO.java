@@ -1,7 +1,14 @@
-import java.math.BigDecimal;
-import java.util.*;
+package com.moneyapp.dao;
 
-public class AccountService {
+import com.moneyapp.model.Account;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class AccountDAO {
 
     private Map<String, Account> Accounts = new HashMap<>();
 
@@ -36,7 +43,7 @@ public class AccountService {
         }
 
         BigDecimal balance = account.getBalance().add(deltaAmount);
-        if (balance.compareTo(BigDecimal.ZERO) <= 0){
+        if (balance.compareTo(BigDecimal.ZERO) <= 0) {
             //TODO throw exception
             //throw new CustomException("Not sufficient Fund for account: " + accountId);
         }

@@ -1,6 +1,13 @@
-import java.util.*;
+package com.moneyapp.dao;
 
-public class UserService {
+import com.moneyapp.model.User;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class UserDAO {
 
     private Map<String, User> users = new HashMap<>();
 

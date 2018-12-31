@@ -1,17 +1,24 @@
+package com.moneyapp.service;
+
+import com.moneyapp.ResponseError;
+import com.moneyapp.dao.AccountDAO;
+import com.moneyapp.model.Account;
+import com.moneyapp.utils.JsonUtil;
+
 import java.math.BigDecimal;
 
 import static spark.Spark.*;
 
 
-public class AccountController {
+public class AccountService {
 
-    public AccountController(final AccountService accountService) {
+    public AccountService(final AccountDAO accountDAO) {
 
-        get("/account/all", (req, res) -> accountService.getAllAccounts(), JsonUtil.json());
+        get("/account/all", (req, res) -> accountDAO.getAllAccounts(), JsonUtil.json());
 
         get("/account/:id", (req, res) -> {
             String id = req.params(":id");
-            Account account = accountService.getAccount(id);
+            Account account = accountDAO.getAccount(id);
             if (account != null) {
                 return account;
             }
@@ -19,7 +26,7 @@ public class AccountController {
             return new ResponseError("No account with id '%s' found", id);
         }, JsonUtil.json());
 
-        put("/account/create", (req, res) -> accountService.createAccount(
+        put("/account/create", (req, res) -> accountDAO.createAccount(
                 req.queryParams("username"),
                 new BigDecimal(req.queryParams("balance")),
                 req.queryParams("currencycode")
@@ -27,7 +34,7 @@ public class AccountController {
 
         get("/account/:id/balance", (req, res) -> {
             String id = req.params(":id");
-            BigDecimal balance = accountService.getBalance(id);
+            BigDecimal balance = accountDAO.getBalance(id);
             if (balance != null) {
                 return balance;
             }
@@ -35,21 +42,21 @@ public class AccountController {
             return new ResponseError("No account with id '%s' found", id);
         }, JsonUtil.json());
 
-        delete("/account/:id", (req, res) -> accountService.deleteAccount(
+        delete("/account/:id", (req, res) -> accountDAO.deleteAccount(
                 req.params(":id")
         ), JsonUtil.json());
 
         put("/account/:id/withdraw/:amount", (req, res) -> {
             BigDecimal amount = new BigDecimal(req.params(":amount"));
 
-            if (amount.compareTo(BigDecimal.ZERO) <= 0){
+            if (amount.compareTo(BigDecimal.ZERO) <= 0) {
                 //TODO throw exception
                 //throw new WebApplicationException("Invalid Deposit amount", Response.Status.BAD_REQUEST);
             }
 
             BigDecimal delta = amount.negate();
             String id = req.params(":id");
-            Account account = accountService.updateAccountBalance(id, delta);
+            Account account = accountDAO.updateAccountBalance(id, delta);
             if (account != null) {
                 return account;
             }
@@ -60,13 +67,13 @@ public class AccountController {
         put("/account/:id/deposit/:amount", (req, res) -> {
             BigDecimal amount = new BigDecimal(req.params(":amount"));
 
-            if (amount.compareTo(BigDecimal.ZERO) <= 0){
+            if (amount.compareTo(BigDecimal.ZERO) <= 0) {
                 //TODO throw exception
                 //throw new WebApplicationException("Invalid Deposit amount", Response.Status.BAD_REQUEST);
             }
 
             String id = req.params(":id");
-            Account account = accountService.updateAccountBalance(id, amount);
+            Account account = accountDAO.updateAccountBalance(id, amount);
             if (account != null) {
                 return account;
             }

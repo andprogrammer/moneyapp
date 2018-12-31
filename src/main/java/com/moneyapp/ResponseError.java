@@ -1,3 +1,5 @@
+package com.moneyapp;
+
 public class ResponseError {
 
     private String message;

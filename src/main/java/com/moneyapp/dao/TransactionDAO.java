@@ -1,25 +1,30 @@
+package com.moneyapp.dao;
+
+import com.moneyapp.model.Account;
+import com.moneyapp.model.Transaction;
+
 import java.math.BigDecimal;
 
-public class TransactionService {
+public class TransactionDAO {
 
-    private AccountService accountService;
+    private AccountDAO accountDAO;
 
-    public TransactionService(final AccountService accountService) {
-        this.accountService = accountService;
+    public TransactionDAO(final AccountDAO accountDAO) {
+        this.accountDAO = accountDAO;
     }
 
     public int transfer(Transaction transaction) {
-        Account fromAccount = accountService.getAccount(transaction.getFromAccountId());
+        Account fromAccount = accountDAO.getAccount(transaction.getFromAccountId());
         if (fromAccount == null) {
             throw new IllegalArgumentException("No account with id '" + fromAccount.getId() + "' found");
         }
-        Account toAccount = accountService.getAccount(transaction.getToAccountId());
+        Account toAccount = accountDAO.getAccount(transaction.getToAccountId());
         if (toAccount == null) {
             throw new IllegalArgumentException("No account with id '" + toAccount.getId() + "' found");
         }
 
         BigDecimal amount = transaction.getAmount();
-        if (amount.compareTo(BigDecimal.ZERO) <= 0){
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             //TODO throw exception
             //throw new CustomException("Not sufficient Fund for account: " + accountId);
         }
@@ -30,8 +35,8 @@ public class TransactionService {
 
         fromAccount.setBalance(fromAccount.getBalance().subtract(amount));
         BigDecimal fromAccountNewBalance = fromAccount.getBalance().subtract(amount);
-        if (fromAccountNewBalance.compareTo(BigDecimal.ZERO) < 0){
-            //throw new CustomException("Not enough Fund from source Account ");
+        if (fromAccountNewBalance.compareTo(BigDecimal.ZERO) < 0) {
+            //throw new CustomException("Not enough Fund from source com.moneyapp.model.Account ");
             //TODO throw exception
         }
 

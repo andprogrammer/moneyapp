@@ -1,15 +1,23 @@
+package com.moneyapp.service;
+
+import com.moneyapp.ResponseError;
+import com.moneyapp.dao.UserDAO;
+import com.moneyapp.model.User;
+import com.moneyapp.utils.JsonUtil;
+import spark.Spark;
+
 import static spark.Spark.*;
 
 
-public class UserController {
+public class UserService {
 
-    public UserController(final UserService userService) {
+    public UserService(final UserDAO userDAO) {
 
-        get("/user/all", (req, res) -> userService.getAllUsers(), JsonUtil.json());
+        Spark.get("/user/all", (req, res) -> userDAO.getAllUsers(), JsonUtil.json());
 
         get("/user/:id", (req, res) -> {
             String id = req.params(":id");
-            User user = userService.getUser(id);
+            User user = userDAO.getUser(id);
             if (user != null) {
                 return user;
             }
@@ -17,18 +25,18 @@ public class UserController {
             return new ResponseError("No user with id '%s' found", id);
         }, JsonUtil.json());
 
-        put("/user/create", (req, res) -> userService.createUser(
+        put("/user/create", (req, res) -> userDAO.createUser(
                 req.queryParams("name"),
                 req.queryParams("email")
         ), JsonUtil.json());
 
-        post("/user/:id", (req, res) -> userService.updateUser(
+        post("/user/:id", (req, res) -> userDAO.updateUser(
                 req.params(":id"),
                 req.queryParams("name"),
                 req.queryParams("email")
         ), JsonUtil.json());
 
-        delete("/user/:id", (req, res) -> userService.deleteUser(
+        delete("/user/:id", (req, res) -> userDAO.deleteUser(
                 req.params(":id")
         ), JsonUtil.json());
 

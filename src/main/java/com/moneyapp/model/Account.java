@@ -1,3 +1,5 @@
+package com.moneyapp.model;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -45,7 +47,7 @@ public class Account {
     }
 
     public void setBalance(BigDecimal balance) {//TODO remove setBalance (no public access)
-        if (balance.compareTo(BigDecimal.ZERO) < 0){
+        if (balance.compareTo(BigDecimal.ZERO) < 0) {
             //TODO throw exception
             //throw new CustomException("Not sufficient Fund for account: " + accountId);
         }
@@ -68,7 +70,7 @@ public class Account {
 
     @Override
     public String toString() {
-        return "Account{" +
+        return "com.moneyapp.model.Account{" +
                 "id=" + id +
                 ", userName='" + userName + '\'' +
                 ", balance=" + balance +

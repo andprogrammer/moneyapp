@@ -1,3 +1,5 @@
+package com.moneyapp.model;
+
 import java.math.BigDecimal;
 
 public class Transaction {
@@ -20,9 +22,11 @@ public class Transaction {
     public String getFromAccountId() {
         return fromAccountId;
     }
+
     public String getToAccountId() {
         return toAccountId;
     }
+
     public BigDecimal getAmount() {
         return amount;
     }
