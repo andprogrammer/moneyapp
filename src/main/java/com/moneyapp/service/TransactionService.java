@@ -1,49 +1,51 @@
 package com.moneyapp.service;
 
-import com.moneyapp.exception.ResponseError;
 import com.moneyapp.dao.TransactionDAO;
+import com.moneyapp.exception.CustomException;
+import com.moneyapp.exception.ResponseError;
 import com.moneyapp.model.Transaction;
 import com.moneyapp.utils.JsonUtil;
 import spark.Spark;
 
 import java.math.BigDecimal;
 
+import static com.moneyapp.utils.JsonUtil.FAILED_RESPONSE;
+import static com.moneyapp.utils.Utils.validateBalanceLessThanOrEqualZero;
 import static spark.Spark.after;
 import static spark.Spark.exception;
+
 
 public class TransactionService {
 
     public TransactionService(final TransactionDAO transactionDAO) {
 
-        Spark.post("/transaction/:from_id/:to_id/:amount/:currency_code", (req, res) -> {
-            BigDecimal amount = new BigDecimal(req.params(":amount"));
-
-            if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-                //TODO throw exception
-                //throw new WebApplicationException("Invalid Deposit amount", Response.Status.BAD_REQUEST);
-            }
-
-            String fromAccountId = req.params(":from_id");
-            String toAccountId = req.params(":to_id");
-            String currencyCode = req.params(":currency_code");
-
+        Spark.post("/transaction/:from_id/:to_id/:amount/:currency_code", (request, response) -> {
+            BigDecimal amount = new BigDecimal(request.params(":amount"));
+            validateBalanceLessThanOrEqualZero(amount);
+            String fromAccountId = request.params(":from_id");
+            String toAccountId = request.params(":to_id");
+            String currencyCode = request.params(":currency_code");
             Transaction transaction = new Transaction(fromAccountId, toAccountId, amount, currencyCode);
 
-            int response = transactionDAO.transfer(transaction);
-            if (response == 0) {
+            int responseStatus = transactionDAO.transfer(transaction);
+            if (0 == responseStatus)
                 return "SUCCESS";
-            }
-            res.status(400);
+            response.status(FAILED_RESPONSE);
             return new ResponseError("Transfer failed");
         }, JsonUtil.json());
 
-        after((req, res) -> {
-            res.type("application/json");
+        after((request, response) -> {
+            response.type("application/json");
         });
 
-        exception(IllegalArgumentException.class, (e, req, res) -> {
-            res.status(400);
-            res.body(JsonUtil.toJson(new ResponseError(e)));
+        exception(IllegalArgumentException.class, (exception, request, response) -> {
+            response.status(FAILED_RESPONSE);
+            response.body(JsonUtil.toJson(new ResponseError(exception)));
+        });
+
+        exception(CustomException.class, (exception, request, response) -> {
+            response.status(FAILED_RESPONSE);
+            response.body(JsonUtil.toJson(new ResponseError(exception)));
         });
     }
 }

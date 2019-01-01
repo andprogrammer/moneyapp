@@ -52,7 +52,7 @@ public class Utils {
         }
     }
 
-    public static String createNewAccount(final String name, final String balance, final String currencyCode) {
+    public static String createAccount(final String name, final String balance, final String currencyCode) {
         Utils.Response response = request("PUT", "/account/create?username=" + name + "&balance=" + balance + "&currencycode=" + currencyCode);
         JSONObject json = new JSONObject(response.body);
         assertJSON(response, json, name, balance, currencyCode);

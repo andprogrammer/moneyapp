@@ -1,5 +1,6 @@
 package com.moneyapp.service;
 
+import com.moneyapp.exception.CustomException;
 import com.moneyapp.exception.ResponseError;
 import com.moneyapp.dao.AccountDAO;
 import com.moneyapp.model.Account;
@@ -10,7 +11,7 @@ import java.math.BigDecimal;
 import static com.moneyapp.utils.JsonUtil.FAILED_RESPONSE;
 import static spark.Spark.*;
 
-import static com.moneyapp.utils.Utils.checkBalanceLessThanOrEqualZero;
+import static com.moneyapp.utils.Utils.validateBalanceLessThanOrEqualZero;
 
 
 public class AccountService {
@@ -62,7 +63,7 @@ public class AccountService {
 
         put("/account/:id/withdraw/:amount", (request, response) -> {
             BigDecimal amount = new BigDecimal(request.params(":amount"));
-            checkBalanceLessThanOrEqualZero(amount);
+            validateBalanceLessThanOrEqualZero(amount);
             BigDecimal amountDelta = amount.negate();
             String accountId = request.params(":id");
             return accountDAO.updateAccountBalance(accountId, amountDelta);
@@ -70,7 +71,7 @@ public class AccountService {
 
         put("/account/:id/deposit/:amount", (request, response) -> {
             BigDecimal amount = new BigDecimal(request.params(":amount"));
-            checkBalanceLessThanOrEqualZero(amount);
+            validateBalanceLessThanOrEqualZero(amount);
             String accountId = request.params(":id");
             return accountDAO.updateAccountBalance(accountId, amount);
         }, JsonUtil.json());
@@ -84,7 +85,7 @@ public class AccountService {
             response.body(JsonUtil.toJson(new ResponseError(exception)));
         });
 
-        exception(IllegalArgumentException.class, (exception, request, response) -> {
+        exception(CustomException.class, (exception, request, response) -> {
             response.status(FAILED_RESPONSE);
             response.body(JsonUtil.toJson(new ResponseError(exception)));
         });

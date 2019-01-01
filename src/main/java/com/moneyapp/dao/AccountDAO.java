@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.moneyapp.utils.Utils.checkIdConstraint;
-import static com.moneyapp.utils.Utils.checkBalanceLessThanZero;
+import static com.moneyapp.utils.Utils.validateIdConstraint;
+import static com.moneyapp.utils.Utils.validateBalanceLessThanZero;
 
 
 public class AccountDAO {
@@ -23,7 +23,7 @@ public class AccountDAO {
     }
 
     public Account getAccount(String id) throws CustomException {
-        checkIdConstraint(id);
+        validateIdConstraint(id);
         checkAccountsConstraint();
         if(!accounts.containsKey(id))
             throw new CustomException("Account with id " + id + " not found");
@@ -43,7 +43,7 @@ public class AccountDAO {
     }
 
     public int deleteAccount(String id) throws CustomException {
-        checkIdConstraint(id);
+        validateIdConstraint(id);
         checkAccountsConstraint();
         accounts.remove(id);
         return 0;
@@ -71,7 +71,7 @@ public class AccountDAO {
     private void checkConstraint(String userName, BigDecimal balance, String currencyCode) throws CustomException {
         if (userName == null || userName.isEmpty())
             throw new CustomException("Empty 'userName' parameter");
-        checkBalanceLessThanZero(balance);
+        validateBalanceLessThanZero(balance);
         if (currencyCode == null || currencyCode.isEmpty())
             throw new CustomException("Empty 'currencyCode' parameter");
     }

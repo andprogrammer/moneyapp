@@ -4,11 +4,14 @@ import com.moneyapp.dao.AccountDAO;
 import com.moneyapp.dao.TransactionDAO;
 import com.moneyapp.service.AccountService;
 import com.moneyapp.service.TransactionService;
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.endpoints.moneyapp.utils.Utils.createNewAccount;
+import java.math.BigDecimal;
+
+import static com.endpoints.moneyapp.utils.Utils.createAccount;
 import static com.endpoints.moneyapp.utils.Utils.Response;
 import static com.endpoints.moneyapp.utils.Utils.request;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -36,15 +39,24 @@ public class TransactionServiceTestSuite {
 
     @Test
     public void testTransferTransaction() {
-        String firstAccountId = createNewAccount("Andrzej", "1000", "USD");
-        String secondAccountId = createNewAccount("Tom", "850", "USD");
+        String fromAccountId = createAccount("Andrzej", "1000", "USD");
+        String toAccountId = createAccount("Tom", "850", "USD");
         String amount = "64";
         String currencyCode = "USD";
 
-        assertNotNull(firstAccountId);
-        assertNotNull(secondAccountId);
+        assertNotNull(fromAccountId);
+        assertNotNull(toAccountId);
 
-        Response response = request("POST", "/transaction/" + firstAccountId + "/" + secondAccountId + "/" + amount + "/" + currencyCode);
+        Response response = request("POST", "/transaction/" + fromAccountId + "/" + toAccountId + "/" + amount + "/" + currencyCode);
         assertThat(response.body, equalTo("\"SUCCESS\""));
+
+        validateAccountBalance(fromAccountId, 936);
+        validateAccountBalance(toAccountId, 914);
+    }
+
+    private void validateAccountBalance(String accountId, int balance) {
+        Response accountResponse = request("GET", "/account/" + accountId);
+        JSONObject json = new JSONObject(accountResponse.body);
+        assertThat(new BigDecimal(balance), equalTo(json.getBigDecimal("balance")));
     }
 }

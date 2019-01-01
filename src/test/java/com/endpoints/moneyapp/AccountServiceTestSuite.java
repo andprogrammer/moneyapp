@@ -66,7 +66,7 @@ public class AccountServiceTestSuite {
         String name = "Andrzej";
         String balance = "1000";
         String currencyCode = "USD";
-        String accountId = createNewAccount(name, balance, currencyCode);
+        String accountId = createAccount(name, balance, currencyCode);
         Response response = request("GET", "/account/" + accountId);
         JSONObject json = new JSONObject(response.body);
         assertJSON(response, json, name, balance, currencyCode);
@@ -74,7 +74,7 @@ public class AccountServiceTestSuite {
 
     @Test
     public void testCreateAccount() {
-        createNewAccount("Andrzej", "1000", "USD");
+        createAccount("Andrzej", "1000", "USD");
     }
 
     @Test
@@ -82,7 +82,7 @@ public class AccountServiceTestSuite {
         String name = "Andrzej";
         String balance = "1000";
         String currencyCode = "USD";
-        String accountId = createNewAccount(name, balance, currencyCode);
+        String accountId = createAccount(name, balance, currencyCode);
         Response response = request("GET", "/account/" + accountId + "/balance");
         assertThat(SUCCESS_RESPONSE, equalTo(response.status));
         assertThat(response.body, equalTo("1000"));
@@ -90,7 +90,7 @@ public class AccountServiceTestSuite {
 
     @Test
     public void testDeleteAccount() {
-        String accountId = createNewAccount("Andrzej", "1000", "USD");
+        String accountId = createAccount("Andrzej", "1000", "USD");
         Response response = request("DELETE", "/account/" + accountId);
         assertThat(SUCCESS_RESPONSE, equalTo(response.status));
     }
@@ -99,7 +99,7 @@ public class AccountServiceTestSuite {
     public void testAccountWithdraw() {
         String name = "Andrzej";
         String currencyCode = "USD";
-        String accountId = createNewAccount(name, "1000", currencyCode);
+        String accountId = createAccount(name, "1000", currencyCode);
         String amount = "128";
         Response response = request("PUT", "/account/" + accountId + "/withdraw/" + amount);
         JSONObject json = new JSONObject(response.body);
@@ -110,7 +110,7 @@ public class AccountServiceTestSuite {
     public void testAccountDeposit() {
         String name = "Andrzej";
         String currencyCode = "USD";
-        String accountId = createNewAccount(name, "1000", currencyCode);
+        String accountId = createAccount(name, "1000", currencyCode);
         String amount = "256";
         Response response = request("PUT", "/account/" + accountId + "/deposit/" + amount);
         JSONObject json = new JSONObject(response.body);

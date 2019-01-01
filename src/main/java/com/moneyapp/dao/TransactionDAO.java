@@ -6,6 +6,9 @@ import com.moneyapp.model.Transaction;
 
 import java.math.BigDecimal;
 
+import static com.moneyapp.utils.Utils.*;
+
+
 public class TransactionDAO {
 
     private AccountDAO accountDAO;
@@ -15,34 +18,22 @@ public class TransactionDAO {
     }
 
     public int transfer(Transaction transaction) throws CustomException {
+        validateTransaction(transaction);
+
         Account fromAccount = accountDAO.getAccount(transaction.getFromAccountId());
-        if (fromAccount == null) {
-            throw new IllegalArgumentException("No account with id '" + fromAccount.getId() + "' found");
-        }
         Account toAccount = accountDAO.getAccount(transaction.getToAccountId());
-        if (toAccount == null) {
-            throw new IllegalArgumentException("No account with id '" + toAccount.getId() + "' found");
-        }
 
         BigDecimal amount = transaction.getAmount();
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            //TODO throw exception
-            //throw new CustomException("Not sufficient Fund for account: " + accountId);
-        }
-        String currencyCode = transaction.getCurrencyCode();
-        if (currencyCode == null) {
-            throw new IllegalArgumentException("Incorrect currency code");
-        }
+        validateBalanceLessThanOrEqualZero(amount);
 
-        fromAccount.setBalance(fromAccount.getBalance().subtract(amount));
+        checkCurrencyCodes(fromAccount.getCurrencyCode(), toAccount.getCurrencyCode());
+        checkCurrencyCodes(transaction.getCurrencyCode(), fromAccount.getCurrencyCode());
+
         BigDecimal fromAccountNewBalance = fromAccount.getBalance().subtract(amount);
-        if (fromAccountNewBalance.compareTo(BigDecimal.ZERO) < 0) {
-            //throw new CustomException("Not enough Fund from source com.moneyapp.model.Account ");
-            //TODO throw exception
-        }
+        validateBalanceLessThanZero(fromAccountNewBalance);
+        fromAccount.setBalance(fromAccountNewBalance);
 
         toAccount.setBalance(toAccount.getBalance().add(amount));
-
         return 0;
     }
 }

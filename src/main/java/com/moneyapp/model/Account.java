@@ -5,7 +5,7 @@ import com.moneyapp.exception.CustomException;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import static com.moneyapp.utils.Utils.checkBalanceLessThanZero;
+import static com.moneyapp.utils.Utils.validateBalanceLessThanZero;
 
 
 public class Account {
@@ -51,7 +51,7 @@ public class Account {
     }
 
     public void setBalance(BigDecimal balance) throws CustomException {
-        checkBalanceLessThanZero(balance);
+        validateBalanceLessThanZero(balance);
         this.balance = balance;
     }
 
