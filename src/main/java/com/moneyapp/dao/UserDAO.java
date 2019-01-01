@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.moneyapp.utils.Utils.validateIdConstraint;
+import static com.moneyapp.utils.Utils.validateId;
 
 
 public class UserDAO {
@@ -16,13 +16,13 @@ public class UserDAO {
     private Map<String, User> users = new HashMap<>();
 
     public List<User> getAllUsers() throws CustomException {
-        checkUsersConstraint();
+        validateUsers();
         return new ArrayList<>(users.values());
     }
 
     public User getUser(String id) throws CustomException {
-        validateIdConstraint(id);
-        checkUsersConstraint();
+        validateId(id);
+        validateUsers();
         if (!users.containsKey(id))
             throw new CustomException("User with id " + id + " not found");
         return users.get(id);
@@ -37,27 +37,31 @@ public class UserDAO {
     }
 
     public User updateUser(String id, String name, String email) throws CustomException {
-        validateIdConstraint(id);
+        validateId(id);
         User user = getUser(id);
-        user.setName(name);
-        user.setEmail(email);
+        synchronized (user) {
+            user.setName(name);
+            user.setEmail(email);
+        }
         return user;
     }
 
     private void addUser(User user) throws CustomException {
-        checkUsersConstraint();
+        validateUsers();
         users.put(user.getId(), user);
     }
 
     public int deleteUser(String id) throws CustomException {
-        validateIdConstraint(id);
-        checkUsersConstraint();
-        users.remove(id);
+        validateId(id);
+        validateUsers();
+        synchronized (users) {
+            users.remove(id);
+        }
         return 0;
     }
 
     private boolean checkIfUserAlreadyExists(User user) throws CustomException {
-        checkUsersConstraint();
+        validateUsers();
         if (users.containsValue(user))
             throw new CustomException("User already exists");
         return false;
@@ -70,7 +74,7 @@ public class UserDAO {
             throw new CustomException("Argument 'email' cannot be empty");
     }
 
-    private void checkUsersConstraint() throws CustomException {
+    private void validateUsers() throws CustomException {
         if (users == null)
             throw new CustomException("Error reading users data");
     }

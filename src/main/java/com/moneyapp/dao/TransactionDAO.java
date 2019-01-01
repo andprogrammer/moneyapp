@@ -23,17 +23,18 @@ public class TransactionDAO {
         Account fromAccount = accountDAO.getAccount(transaction.getFromAccountId());
         Account toAccount = accountDAO.getAccount(transaction.getToAccountId());
 
-        BigDecimal amount = transaction.getAmount();
-        validateBalanceLessThanOrEqualZero(amount);
-
         checkCurrencyCodes(fromAccount.getCurrencyCode(), toAccount.getCurrencyCode());
         checkCurrencyCodes(transaction.getCurrencyCode(), fromAccount.getCurrencyCode());
 
-        BigDecimal fromAccountNewBalance = fromAccount.getBalance().subtract(amount);
-        validateBalanceLessThanZero(fromAccountNewBalance);
-        fromAccount.setBalance(fromAccountNewBalance);
+        BigDecimal amount = transaction.getAmount();
+        validateBalanceLessThanOrEqualZero(amount);
 
-        toAccount.setBalance(toAccount.getBalance().add(amount));
+        synchronized (this) {
+            BigDecimal fromAccountNewBalance = fromAccount.getBalance().subtract(amount);
+            validateBalanceLessThanZero(fromAccountNewBalance);
+            fromAccount.setBalance(fromAccountNewBalance);
+            toAccount.setBalance(toAccount.getBalance().add(amount));
+        }
         return 0;
     }
 }

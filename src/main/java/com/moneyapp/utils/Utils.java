@@ -11,7 +11,7 @@ public class Utils {
 
     public static final HashSet<String> CURRENCY_CODES = new HashSet<>();
 
-    public static void validateIdConstraint(String id) throws CustomException {
+    public static void validateId(String id) throws CustomException {
         if (id == null || id.isEmpty())
             throw new CustomException("Argument 'id' cannot be empty");
     }

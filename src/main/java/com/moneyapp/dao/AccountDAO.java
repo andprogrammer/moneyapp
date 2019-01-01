@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.moneyapp.utils.Utils.validateBalanceLessThanZero;
-import static com.moneyapp.utils.Utils.validateIdConstraint;
+import static com.moneyapp.utils.Utils.validateId;
 
 
 public class AccountDAO {
@@ -18,20 +18,20 @@ public class AccountDAO {
     private Map<String, Account> accounts = new HashMap<>();
 
     public List<Account> getAllAccounts() throws CustomException {
-        checkAccountsConstraint();
+        validateAccount();
         return new ArrayList<>(accounts.values());
     }
 
     public Account getAccount(String id) throws CustomException {
-        validateIdConstraint(id);
-        checkAccountsConstraint();
+        validateId(id);
+        validateAccount();
         if (!accounts.containsKey(id))
             throw new CustomException("Account with id " + id + " not found");
         return accounts.get(id);
     }
 
     public Account createAccount(String userName, BigDecimal balance, String currencyCode) throws CustomException {
-        checkConstraint(userName, balance, currencyCode);
+        validateAccount(userName, balance, currencyCode);
         Account account = new Account(userName, balance, currencyCode);
         checkIfAccountAlreadyExists(account);
         addAccount(account);
@@ -43,32 +43,36 @@ public class AccountDAO {
     }
 
     public int deleteAccount(String id) throws CustomException {
-        validateIdConstraint(id);
-        checkAccountsConstraint();
-        accounts.remove(id);
+        validateId(id);
+        validateAccount();
+        synchronized(accounts) {
+            accounts.remove(id);
+        }
         return 0;
     }
 
     public Account updateAccountBalance(String id, BigDecimal amount) throws CustomException {
         Account account = getAccount(id);
-        BigDecimal balance = account.getBalance().add(amount);
-        account.setBalance(balance);
+        synchronized (account) {
+            BigDecimal balance = account.getBalance().add(amount);
+            account.setBalance(balance);
+        }
         return account;
     }
 
     private void addAccount(Account account) throws CustomException {
-        checkAccountsConstraint();
+        validateAccount();
         accounts.put(account.getId(), account);
     }
 
     private boolean checkIfAccountAlreadyExists(Account account) throws CustomException {
-        checkAccountsConstraint();
+        validateAccount();
         if (accounts.containsValue(account))
             throw new CustomException("Account already exists");
         return false;
     }
 
-    private void checkConstraint(String userName, BigDecimal balance, String currencyCode) throws CustomException {
+    private void validateAccount(String userName, BigDecimal balance, String currencyCode) throws CustomException {
         if (userName == null || userName.isEmpty())
             throw new CustomException("Empty 'userName' parameter");
         validateBalanceLessThanZero(balance);
@@ -76,7 +80,7 @@ public class AccountDAO {
             throw new CustomException("Empty 'currencyCode' parameter");
     }
 
-    private void checkAccountsConstraint() throws CustomException {
+    private void validateAccount() throws CustomException {
         if (accounts == null)
             throw new CustomException("Error reading accounts data");
     }
