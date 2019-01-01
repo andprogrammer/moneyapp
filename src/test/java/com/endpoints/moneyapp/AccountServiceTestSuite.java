@@ -11,6 +11,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 
 import static com.endpoints.moneyapp.utils.Utils.*;
+import static com.moneyapp.utils.JSONUtil.SUCCESSFUL_RESPONSE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static spark.Spark.awaitInitialization;
@@ -92,6 +93,7 @@ public class AccountServiceTestSuite {
     public void testDeleteAccount() {
         String accountId = createAccount("Andrzej", "1000", "USD");
         Response response = request("DELETE", "/account/" + accountId);
+        assertThat(response.body, equalTo(Integer.toString(SUCCESSFUL_RESPONSE)));
         assertThat(SUCCESS_RESPONSE, equalTo(response.status));
     }
 

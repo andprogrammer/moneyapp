@@ -8,13 +8,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static com.endpoints.moneyapp.utils.Utils.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertNotNull;
 import static spark.Spark.awaitInitialization;
 import static spark.Spark.stop;
-
-import static com.endpoints.moneyapp.utils.Utils.*;
 
 
 public class UserServiceTestSuite {

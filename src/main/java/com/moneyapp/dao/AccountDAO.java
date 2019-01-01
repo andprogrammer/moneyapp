@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.moneyapp.utils.Utils.validateIdConstraint;
 import static com.moneyapp.utils.Utils.validateBalanceLessThanZero;
+import static com.moneyapp.utils.Utils.validateIdConstraint;
 
 
 public class AccountDAO {
@@ -25,7 +25,7 @@ public class AccountDAO {
     public Account getAccount(String id) throws CustomException {
         validateIdConstraint(id);
         checkAccountsConstraint();
-        if(!accounts.containsKey(id))
+        if (!accounts.containsKey(id))
             throw new CustomException("Account with id " + id + " not found");
         return accounts.get(id);
     }

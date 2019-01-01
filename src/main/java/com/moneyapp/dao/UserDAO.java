@@ -23,7 +23,7 @@ public class UserDAO {
     public User getUser(String id) throws CustomException {
         validateIdConstraint(id);
         checkUsersConstraint();
-        if(!users.containsKey(id))
+        if (!users.containsKey(id))
             throw new CustomException("User with id " + id + " not found");
         return users.get(id);
     }

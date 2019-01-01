@@ -11,9 +11,8 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 
-import static com.endpoints.moneyapp.utils.Utils.createAccount;
-import static com.endpoints.moneyapp.utils.Utils.Response;
-import static com.endpoints.moneyapp.utils.Utils.request;
+import static com.endpoints.moneyapp.utils.Utils.*;
+import static com.moneyapp.utils.JSONUtil.SUCCESSFUL_RESPONSE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertNotNull;
@@ -48,7 +47,7 @@ public class TransactionServiceTestSuite {
         assertNotNull(toAccountId);
 
         Response response = request("POST", "/transaction/" + fromAccountId + "/" + toAccountId + "/" + amount + "/" + currencyCode);
-        assertThat(response.body, equalTo("\"SUCCESS\""));
+        assertThat(response.body, equalTo(Integer.toString(SUCCESSFUL_RESPONSE)));
 
         validateAccountBalance(fromAccountId, 936);
         validateAccountBalance(toAccountId, 914);

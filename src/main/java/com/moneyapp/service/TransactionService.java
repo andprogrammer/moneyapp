@@ -4,12 +4,13 @@ import com.moneyapp.dao.TransactionDAO;
 import com.moneyapp.exception.CustomException;
 import com.moneyapp.exception.ResponseError;
 import com.moneyapp.model.Transaction;
-import com.moneyapp.utils.JsonUtil;
+import com.moneyapp.utils.JSONUtil;
 import spark.Spark;
 
 import java.math.BigDecimal;
 
-import static com.moneyapp.utils.JsonUtil.FAILED_RESPONSE;
+import static com.moneyapp.utils.JSONUtil.FAILED_RESPONSE;
+import static com.moneyapp.utils.JSONUtil.SUCCESSFUL_RESPONSE;
 import static com.moneyapp.utils.Utils.validateBalanceLessThanOrEqualZero;
 import static spark.Spark.after;
 import static spark.Spark.exception;
@@ -29,10 +30,10 @@ public class TransactionService {
 
             int responseStatus = transactionDAO.transfer(transaction);
             if (0 == responseStatus)
-                return "SUCCESS";
+                return SUCCESSFUL_RESPONSE;
             response.status(FAILED_RESPONSE);
             return new ResponseError("Transfer failed");
-        }, JsonUtil.json());
+        }, JSONUtil.json());
 
         after((request, response) -> {
             response.type("application/json");
@@ -40,12 +41,12 @@ public class TransactionService {
 
         exception(IllegalArgumentException.class, (exception, request, response) -> {
             response.status(FAILED_RESPONSE);
-            response.body(JsonUtil.toJson(new ResponseError(exception)));
+            response.body(JSONUtil.toJson(new ResponseError(exception)));
         });
 
         exception(CustomException.class, (exception, request, response) -> {
             response.status(FAILED_RESPONSE);
-            response.body(JsonUtil.toJson(new ResponseError(exception)));
+            response.body(JSONUtil.toJson(new ResponseError(exception)));
         });
     }
 }
