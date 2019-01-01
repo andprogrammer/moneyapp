@@ -2,14 +2,12 @@ package com.moneyapp.model;
 
 import java.math.BigDecimal;
 
+
 public class Transaction {
 
     private String fromAccountId;
-
     private String toAccountId;
-
     private BigDecimal amount;
-
     private String currencyCode;
 
     public Transaction(String fromAccountId, String toAccountId, BigDecimal amount, String currencyCode) {
@@ -35,4 +33,28 @@ public class Transaction {
         return currencyCode;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        Transaction account = (Transaction) o;
+        if (!fromAccountId.equals(account.fromAccountId))
+            return false;
+        if (!toAccountId.equals(account.toAccountId))
+            return false;
+        if (!amount.equals(account.amount))
+            return false;
+        return currencyCode.equals(account.currencyCode);
+    }
+
+    @Override
+    public String toString() {
+        return "fromAccountId=" + fromAccountId
+                + "\\toAccountId=" + toAccountId
+                + "\\amount=" + amount
+                + "\\currencyCode=" + currencyCode;
+    }
 }

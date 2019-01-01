@@ -2,6 +2,7 @@ package com.endpoints.moneyapp;
 
 import com.moneyapp.dao.UserDAO;
 import com.moneyapp.service.UserService;
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.After;
@@ -18,8 +19,15 @@ import static spark.Spark.stop;
 
 public class UserServiceTestSuite {
 
+    private final static Logger logger = Logger.getLogger(new Throwable().getStackTrace()[0].getClassName().getClass());
+
     @Before
     public void setUp() {
+        if (logger.isDebugEnabled())
+            logger.debug(new Throwable().getStackTrace()[0].getMethodName()
+                    + "() Starting testSuite "
+                    + new Throwable().getStackTrace()[0].getClassName()
+                    + " on " + HTTP_LOCALHOST + ":" + PORT);
         new UserService(new UserDAO());
         awaitInitialization();
     }

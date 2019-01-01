@@ -2,6 +2,7 @@ package com.moneyapp.model;
 
 import java.util.UUID;
 
+
 public class User {
 
     private String id;
@@ -46,7 +47,7 @@ public class User {
             return false;
 
         User user = (User) o;
-        if (id != user.id)
+        if (!id.equals(user.id))
             return false;
         if (!name.equals(user.name))
             return false;
@@ -55,6 +56,8 @@ public class User {
 
     @Override
     public String toString() {
-        return new StringBuffer().append(getName()).append(getEmail()).toString();
+        return "id=" + id
+                + "\\name=" + name
+                + "\\email=" + email;
     }
 }

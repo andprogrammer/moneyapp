@@ -92,10 +92,11 @@ public class Utils {
 
         @Override
         public boolean equals(Object o) {
-            if (!(o instanceof Pair)) return false;
+            if (!(o instanceof Pair))
+                return false;
+
             Pair pair = (Pair) o;
-            return this.left.equals(pair.getLeft()) &&
-                    this.right.equals(pair.getRight());
+            return this.left.equals(pair.getLeft()) && this.right.equals(pair.getRight());
         }
     }
 }

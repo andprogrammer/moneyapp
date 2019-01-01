@@ -4,6 +4,7 @@ import com.moneyapp.dao.AccountDAO;
 import com.moneyapp.dao.TransactionDAO;
 import com.moneyapp.service.AccountService;
 import com.moneyapp.service.TransactionService;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
@@ -23,9 +24,15 @@ import static spark.Spark.stop;
 public class TransactionServiceTestSuite {
 
     public static final AccountDAO ACCOUNT_SERVICE = new AccountDAO();
+    private final static Logger logger = Logger.getLogger(new Throwable().getStackTrace()[0].getClassName().getClass());
 
     @Before
     public void setUp() {
+        if (logger.isDebugEnabled())
+            logger.debug(new Throwable().getStackTrace()[0].getMethodName()
+                    + "() Starting testSuite "
+                    + new Throwable().getStackTrace()[0].getClassName()
+                    + " on " + HTTP_LOCALHOST + ":" + PORT);
         new AccountService(ACCOUNT_SERVICE);
         new TransactionService(new TransactionDAO(ACCOUNT_SERVICE));
         awaitInitialization();
