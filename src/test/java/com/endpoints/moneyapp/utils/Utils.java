@@ -1,5 +1,6 @@
 package com.endpoints.moneyapp.utils;
 
+import com.moneyapp.exception.CustomException;
 import org.json.JSONObject;
 import spark.utils.IOUtils;
 
@@ -52,8 +53,10 @@ public class Utils {
         }
     }
 
-    public static String createAccount(final String name, final String balance, final String currencyCode) {
+    public static String createAccount(final String name, final String balance, final String currencyCode) throws CustomException {
         Utils.Response response = request("PUT", "/account/create?username=" + name + "&balance=" + balance + "&currencycode=" + currencyCode);
+        if (null == response)
+            throw new CustomException("Creating account failed");
         JSONObject json = new JSONObject(response.body);
         assertJSON(response, json, name, balance, currencyCode);
         return json.getString("id");
@@ -77,11 +80,11 @@ public class Utils {
             this.right = right;
         }
 
-        public L getLeft() {
+        private L getLeft() {
             return left;
         }
 
-        public R getRight() {
+        private R getRight() {
             return right;
         }
 

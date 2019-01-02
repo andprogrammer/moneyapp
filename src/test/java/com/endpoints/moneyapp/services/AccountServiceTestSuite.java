@@ -1,6 +1,7 @@
 package com.endpoints.moneyapp.services;
 
 import com.moneyapp.dao.implementation.AccountDAOImplementation;
+import com.moneyapp.exception.CustomException;
 import com.moneyapp.service.AccountService;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -71,7 +72,7 @@ public class AccountServiceTestSuite {
     }
 
     @Test
-    public void testGetAccount() {
+    public void testGetAccount() throws CustomException {
         String name = "Andrzej";
         String balance = "1000";
         String currencyCode = "USD";
@@ -82,12 +83,12 @@ public class AccountServiceTestSuite {
     }
 
     @Test
-    public void testCreateAccount() {
+    public void testCreateAccount() throws CustomException {
         createAccount("Andrzej", "1000", "USD");
     }
 
     @Test
-    public void testGetAccountBalance() {
+    public void testGetAccountBalance() throws CustomException {
         String name = "Andrzej";
         String balance = "1000";
         String currencyCode = "USD";
@@ -98,7 +99,7 @@ public class AccountServiceTestSuite {
     }
 
     @Test
-    public void testDeleteAccount() {
+    public void testDeleteAccount() throws CustomException {
         String accountId = createAccount("Andrzej", "1000", "USD");
         Response response = request("DELETE", "/account/" + accountId);
         assertThat(response.body, equalTo(Integer.toString(SUCCESSFUL_RESPONSE)));
@@ -106,7 +107,7 @@ public class AccountServiceTestSuite {
     }
 
     @Test
-    public void testAccountWithdraw() {
+    public void testAccountWithdraw() throws CustomException {
         String name = "Andrzej";
         String currencyCode = "USD";
         String accountId = createAccount(name, "1000", currencyCode);
@@ -117,7 +118,7 @@ public class AccountServiceTestSuite {
     }
 
     @Test
-    public void testAccountDeposit() {
+    public void testAccountDeposit() throws CustomException {
         String name = "Andrzej";
         String currencyCode = "USD";
         String accountId = createAccount(name, "1000", currencyCode);

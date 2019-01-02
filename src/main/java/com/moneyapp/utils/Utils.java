@@ -9,7 +9,7 @@ import java.util.HashSet;
 
 public class Utils {
 
-    public static final HashSet<String> CURRENCY_CODES = new HashSet<>();
+    private static final HashSet<String> CURRENCY_CODES = new HashSet<>();
     private final static Logger logger = Logger.getLogger(new Throwable().getStackTrace()[0].getClassName().getClass());
 
     public static void validateId(String id) throws CustomException {
@@ -42,7 +42,7 @@ public class Utils {
         validateCurrencyCode(transaction.getCurrencyCode());
     }
 
-    public static void validateCurrencyCode(String currencyCode) throws CustomException {
+    private static void validateCurrencyCode(String currencyCode) throws CustomException {
         setCurrencyCodes();
         if (!CURRENCY_CODES.contains(currencyCode)) {
             logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() Incorrect currency code=" + currencyCode);

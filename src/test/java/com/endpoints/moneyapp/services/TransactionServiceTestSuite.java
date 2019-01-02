@@ -2,6 +2,7 @@ package com.endpoints.moneyapp.services;
 
 import com.moneyapp.dao.implementation.AccountDAOImplementation;
 import com.moneyapp.dao.implementation.TransactionDAOImplementation;
+import com.moneyapp.exception.CustomException;
 import com.moneyapp.service.AccountService;
 import com.moneyapp.service.TransactionService;
 import org.apache.log4j.Logger;
@@ -44,7 +45,7 @@ public class TransactionServiceTestSuite {
     }
 
     @Test
-    public void testTransferTransaction() {
+    public void testTransferTransaction() throws CustomException {
         String fromAccountId = createAccount("Andrzej", "1000", "USD");
         String toAccountId = createAccount("Tom", "850", "USD");
         String amount = "64";
