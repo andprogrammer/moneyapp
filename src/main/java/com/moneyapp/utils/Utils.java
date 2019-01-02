@@ -7,7 +7,6 @@ import org.apache.log4j.Logger;
 import java.math.BigDecimal;
 import java.util.HashSet;
 
-
 public class Utils {
 
     public static final HashSet<String> CURRENCY_CODES = new HashSet<>();

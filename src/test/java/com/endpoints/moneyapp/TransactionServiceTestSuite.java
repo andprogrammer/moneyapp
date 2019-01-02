@@ -1,7 +1,7 @@
 package com.endpoints.moneyapp;
 
-import com.moneyapp.dao.AccountDAO;
-import com.moneyapp.dao.TransactionDAO;
+import com.moneyapp.dao.implementation.AccountDAOImplementation;
+import com.moneyapp.dao.implementation.TransactionDAOImplementation;
 import com.moneyapp.service.AccountService;
 import com.moneyapp.service.TransactionService;
 import org.apache.log4j.Logger;
@@ -23,7 +23,7 @@ import static spark.Spark.stop;
 
 public class TransactionServiceTestSuite {
 
-    public static final AccountDAO ACCOUNT_SERVICE = new AccountDAO();
+    public static final AccountDAOImplementation ACCOUNT_SERVICE = new AccountDAOImplementation();
     private final static Logger logger = Logger.getLogger(new Throwable().getStackTrace()[0].getClassName().getClass());
 
     @Before
@@ -34,7 +34,7 @@ public class TransactionServiceTestSuite {
                     + new Throwable().getStackTrace()[0].getClassName()
                     + " on " + HTTP_LOCALHOST + ":" + PORT);
         new AccountService(ACCOUNT_SERVICE);
-        new TransactionService(new TransactionDAO(ACCOUNT_SERVICE));
+        new TransactionService(new TransactionDAOImplementation(ACCOUNT_SERVICE));
         awaitInitialization();
     }
 

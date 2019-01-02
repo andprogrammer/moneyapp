@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import static com.moneyapp.utils.Utils.validateBalanceLessThanZero;
 
-
 public class Account {
 
     private String id;
@@ -30,7 +29,9 @@ public class Account {
         return userName;
     }
 
-    public BigDecimal getBalance() { return balance; }
+    public BigDecimal getBalance() {
+        return balance;
+    }
 
     public String getCurrencyCode() {
         return currencyCode;

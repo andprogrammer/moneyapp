@@ -12,7 +12,6 @@ import static com.moneyapp.utils.JSONUtil.SUCCESSFUL_RESPONSE;
 import static com.moneyapp.utils.Utils.validateBalanceLessThanOrEqualZero;
 import static spark.Spark.*;
 
-
 public class AccountService {
 
     public AccountService(final AccountDAO accountDAO) {

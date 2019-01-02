@@ -8,7 +8,6 @@ import com.moneyapp.utils.JSONUtil;
 import static com.moneyapp.utils.JSONUtil.FAILED_RESPONSE;
 import static spark.Spark.*;
 
-
 public class UserService {
 
     public UserService(final UserDAO userDAO) {

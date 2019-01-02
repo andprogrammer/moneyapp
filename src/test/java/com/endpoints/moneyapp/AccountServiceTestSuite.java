@@ -1,6 +1,6 @@
 package com.endpoints.moneyapp;
 
-import com.moneyapp.dao.AccountDAO;
+import com.moneyapp.dao.implementation.AccountDAOImplementation;
 import com.moneyapp.service.AccountService;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -30,7 +30,7 @@ public class AccountServiceTestSuite {
                     + "() Starting testSuite "
                     + new Throwable().getStackTrace()[0].getClassName()
                     + " on " + HTTP_LOCALHOST + ":" + PORT);
-        new AccountService(new AccountDAO());
+        new AccountService(new AccountDAOImplementation());
         awaitInitialization();
     }
 

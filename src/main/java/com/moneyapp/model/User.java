@@ -2,7 +2,6 @@ package com.moneyapp.model;
 
 import java.util.UUID;
 
-
 public class User {
 
     private String id;

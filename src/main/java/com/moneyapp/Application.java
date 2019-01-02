@@ -1,5 +1,6 @@
 package com.moneyapp;
 
+import com.moneyapp.dao.AbstractFactory;
 import com.moneyapp.dao.AccountDAO;
 import com.moneyapp.dao.TransactionDAO;
 import com.moneyapp.dao.UserDAO;
@@ -10,7 +11,6 @@ import org.apache.log4j.Logger;
 
 public class Application {
 
-    public static final AccountDAO ACCOUNT_SERVICE = new AccountDAO();
     private final static Logger logger = Logger.getLogger(new Throwable().getStackTrace()[0].getClassName().getClass());
 
     public static void main(String[] args) {
@@ -18,13 +18,18 @@ public class Application {
     }
 
     private static void runApplication() {
+        logger.info(new Throwable().getStackTrace()[0].getMethodName() + "() Starting Money Application");
+        startServices();
+        logger.info(new Throwable().getStackTrace()[0].getMethodName() + "() Stopping Money Application");
+    }
 
-        if (logger.isDebugEnabled())
-            logger.info(new Throwable().getStackTrace()[0].getMethodName() + "() Starting Money Application");
-        new UserService(new UserDAO());
-        new AccountService(ACCOUNT_SERVICE);
-        new TransactionService(new TransactionDAO(ACCOUNT_SERVICE));
-        if (logger.isDebugEnabled())
-            logger.info(new Throwable().getStackTrace()[0].getMethodName() + "() Stopping Money Application");
+    private static void startServices() {
+        AbstractFactory daoFactory = AbstractFactory.getFactory(AbstractFactory.FactoryType.DAO);
+        UserDAO userDAO = daoFactory.getUserDAO();
+        AccountDAO accountDAO = daoFactory.getAccountDAO();
+        TransactionDAO transactionDAO = daoFactory.getTransactionDAO();
+        new UserService(userDAO);
+        new AccountService(accountDAO);
+        new TransactionService(transactionDAO);
     }
 }

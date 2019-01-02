@@ -15,7 +15,6 @@ import static com.moneyapp.utils.Utils.validateBalanceLessThanOrEqualZero;
 import static spark.Spark.after;
 import static spark.Spark.exception;
 
-
 public class TransactionService {
 
     public TransactionService(final TransactionDAO transactionDAO) {

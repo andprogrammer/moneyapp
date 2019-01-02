@@ -1,6 +1,6 @@
 package com.endpoints.moneyapp;
 
-import com.moneyapp.dao.UserDAO;
+import com.moneyapp.dao.implementation.UserDAOImplementation;
 import com.moneyapp.service.UserService;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -28,7 +28,7 @@ public class UserServiceTestSuite {
                     + "() Starting testSuite "
                     + new Throwable().getStackTrace()[0].getClassName()
                     + " on " + HTTP_LOCALHOST + ":" + PORT);
-        new UserService(new UserDAO());
+        new UserService(new UserDAOImplementation());
         awaitInitialization();
     }
 

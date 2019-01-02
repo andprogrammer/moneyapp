@@ -2,7 +2,6 @@ package com.moneyapp.model;
 
 import java.math.BigDecimal;
 
-
 public class Transaction {
 
     private String fromAccountId;
