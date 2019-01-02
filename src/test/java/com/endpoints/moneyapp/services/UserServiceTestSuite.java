@@ -1,4 +1,4 @@
-package com.endpoints.moneyapp;
+package com.endpoints.moneyapp.services;
 
 import com.moneyapp.dao.implementation.UserDAOImplementation;
 import com.moneyapp.service.UserService;

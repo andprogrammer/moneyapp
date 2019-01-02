@@ -19,17 +19,17 @@ public class Utils {
         }
     }
 
-    public static void validateBalanceLessThanOrEqualZero(BigDecimal balance) throws CustomException {
-        if (null == balance || balance.compareTo(BigDecimal.ZERO) <= 0) {
-            logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() Incorrect balance=" + balance);
-            throw new CustomException("Parameter 'balance' less than or equal zero");
+    public static void validateAmountLessThanOrEqualZero(BigDecimal amount) throws CustomException {
+        if (null == amount || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() Incorrect amount=" + amount);
+            throw new CustomException("Parameter 'amount' less than or equal zero");
         }
     }
 
-    public static void validateBalanceLessThanZero(BigDecimal balance) throws CustomException {
-        if (null == balance || balance.compareTo(BigDecimal.ZERO) < 0) {
-            logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() Incorrect balance=" + balance);
-            throw new CustomException("Parameter 'balance' less than zero");
+    public static void validateAmountLessThanZero(BigDecimal amount) throws CustomException {
+        if (null == amount || amount.compareTo(BigDecimal.ZERO) < 0) {
+            logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() Incorrect amount=" + amount);
+            throw new CustomException("Parameter 'amount' less than zero");
         }
     }
 

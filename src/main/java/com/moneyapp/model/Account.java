@@ -5,7 +5,7 @@ import com.moneyapp.exception.CustomException;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import static com.moneyapp.utils.Utils.validateBalanceLessThanZero;
+import static com.moneyapp.utils.Utils.validateAmountLessThanZero;
 
 public class Account {
 
@@ -25,22 +25,26 @@ public class Account {
         return id;
     }
 
-    public String getUserName() {
-        return userName;
-    }
+    public void setId(String id) { this.id = id; }
+
+    public String getUserName() { return userName; }
+
+    public void setUserName(String userName) { this.userName = userName; }
 
     public BigDecimal getBalance() {
         return balance;
+    }
+
+    public void setBalance(BigDecimal balance) throws CustomException {
+        validateAmountLessThanZero(balance);
+        this.balance = balance;
     }
 
     public String getCurrencyCode() {
         return currencyCode;
     }
 
-    public void setBalance(BigDecimal balance) throws CustomException {
-        validateBalanceLessThanZero(balance);
-        this.balance = balance;
-    }
+    public void setCurrencyCode(String currencyCode) { this.currencyCode = currencyCode; }
 
     @Override
     public boolean equals(Object o) {

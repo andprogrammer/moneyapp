@@ -29,7 +29,7 @@ public class TransactionDAOImplementation implements TransactionDAO {
         checkCurrencyCodes(transaction.getCurrencyCode(), fromAccount.getCurrencyCode());
 
         BigDecimal amount = transaction.getAmount();
-        validateBalanceLessThanOrEqualZero(amount);
+        validateAmountLessThanOrEqualZero(amount);
 
         if (logger.isDebugEnabled()) {
             logger.debug(new Throwable().getStackTrace()[0].getMethodName()
@@ -40,7 +40,7 @@ public class TransactionDAOImplementation implements TransactionDAO {
 
         synchronized (this) {
             BigDecimal fromAccountNewBalance = fromAccount.getBalance().subtract(amount);
-            validateBalanceLessThanZero(fromAccountNewBalance);
+            validateAmountLessThanZero(fromAccountNewBalance);
             fromAccount.setBalance(fromAccountNewBalance);
             toAccount.setBalance(toAccount.getBalance().add(amount));
         }

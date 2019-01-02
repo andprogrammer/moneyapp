@@ -11,8 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.moneyapp.utils.Utils.validateBalanceLessThanZero;
-import static com.moneyapp.utils.Utils.validateId;
+import static com.moneyapp.utils.Utils.*;
 
 public class AccountDAOImplementation implements AccountDAO {
 
@@ -99,7 +98,7 @@ public class AccountDAOImplementation implements AccountDAO {
             logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() Incorrect username=" + userName);
             throw new CustomException("Empty 'userName' parameter");
         }
-        validateBalanceLessThanZero(balance);
+        validateAmountLessThanZero(balance);
         if (currencyCode == null || currencyCode.isEmpty()) {
             logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() Incorrect currency code=" + currencyCode);
             throw new CustomException("Empty 'currencyCode' parameter");

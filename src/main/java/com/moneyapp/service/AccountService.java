@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 import static com.moneyapp.utils.JSONUtil.FAILED_RESPONSE;
 import static com.moneyapp.utils.JSONUtil.SUCCESSFUL_RESPONSE;
-import static com.moneyapp.utils.Utils.validateBalanceLessThanOrEqualZero;
+import static com.moneyapp.utils.Utils.validateAmountLessThanOrEqualZero;
 import static spark.Spark.*;
 
 public class AccountService {
@@ -41,7 +41,7 @@ public class AccountService {
 
         put("/account/:id/withdraw/:amount", (request, response) -> {
             BigDecimal amount = new BigDecimal(request.params(":amount"));
-            validateBalanceLessThanOrEqualZero(amount);
+            validateAmountLessThanOrEqualZero(amount);
             BigDecimal amountDelta = amount.negate();
             String accountId = request.params(":id");
             return accountDAO.updateAccountBalance(accountId, amountDelta);
@@ -49,7 +49,7 @@ public class AccountService {
 
         put("/account/:id/deposit/:amount", (request, response) -> {
             BigDecimal amount = new BigDecimal(request.params(":amount"));
-            validateBalanceLessThanOrEqualZero(amount);
+            validateAmountLessThanOrEqualZero(amount);
             String accountId = request.params(":id");
             return accountDAO.updateAccountBalance(accountId, amount);
         }, JSONUtil.json());

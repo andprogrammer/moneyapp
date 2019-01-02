@@ -1,6 +1,9 @@
 package com.endpoints.moneyapp.utils;
 
+import com.moneyapp.exception.CustomException;
 import org.json.JSONObject;
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
 import spark.utils.IOUtils;
 
 import java.io.IOException;

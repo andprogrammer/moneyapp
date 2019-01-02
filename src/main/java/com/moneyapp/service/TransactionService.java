@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 
 import static com.moneyapp.utils.JSONUtil.FAILED_RESPONSE;
 import static com.moneyapp.utils.JSONUtil.SUCCESSFUL_RESPONSE;
-import static com.moneyapp.utils.Utils.validateBalanceLessThanOrEqualZero;
+import static com.moneyapp.utils.Utils.validateAmountLessThanOrEqualZero;
 import static spark.Spark.after;
 import static spark.Spark.exception;
 
@@ -21,7 +21,7 @@ public class TransactionService {
 
         Spark.post("/transaction/:from_id/:to_id/:amount/:currency_code", (request, response) -> {
             BigDecimal amount = new BigDecimal(request.params(":amount"));
-            validateBalanceLessThanOrEqualZero(amount);
+            validateAmountLessThanOrEqualZero(amount);
             String fromAccountId = request.params(":from_id");
             String toAccountId = request.params(":to_id");
             String currencyCode = request.params(":currency_code");
