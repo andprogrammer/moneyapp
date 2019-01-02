@@ -27,7 +27,7 @@ mvn clean install
 | PUT | /user/create?name=...&email=... | create a new user |
 | GET | /user/all | get users |
 | GET | /user/{userId} | get user |
-| POST | /user/{userId} | update user |
+| POST | /user/{userId}?name=...&email=... | update user |
 | DELETE | /user/{userId} | delete user |
 | POST | /transaction/{fromAccountId}/{toAccountId}/{amount}/{currencycode} | transaction |
 
