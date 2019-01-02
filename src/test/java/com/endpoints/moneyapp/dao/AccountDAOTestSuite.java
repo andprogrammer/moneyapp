@@ -2,10 +2,8 @@ package com.endpoints.moneyapp.dao;
 
 import com.moneyapp.dao.AbstractFactory;
 import com.moneyapp.dao.AccountDAO;
-import com.moneyapp.dao.UserDAO;
 import com.moneyapp.exception.CustomException;
 import com.moneyapp.model.Account;
-import com.moneyapp.model.User;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
@@ -51,7 +49,7 @@ public class AccountDAOTestSuite {
 
     @Test
     public void testGetAccount() throws CustomException {
-        createAccount();
+        createAccount("Andrzej", new BigDecimal("1000"), "USD");
     }
 
     @Test
@@ -64,7 +62,7 @@ public class AccountDAOTestSuite {
 
     @Test
     public void testCreateAccount() throws CustomException {
-        createAccount();
+        createAccount("Andrzej", new BigDecimal("1000"), "USD");
     }
 
     @Test
@@ -101,19 +99,19 @@ public class AccountDAOTestSuite {
         accountDAO.updateAccountBalance(accountId, new BigDecimal("770"));
     }
 
-    private void expectedExceptionThrow(Class<CustomException> exceptionType, String exceptionMessage) {
-        expectedExceptionThrown.expect(exceptionType);
-        expectedExceptionThrown.expectMessage(equalTo(exceptionMessage));
-    }
-
-    private Account createAccount() throws CustomException {
+    private static Account createAccount(String name, BigDecimal balance, String currencyCode) throws CustomException {
         AccountDAO accountDAO = getAccountDAO();
-        Account account = accountDAO.createAccount("Andrzej", new BigDecimal("1000"), "USD");
+        Account account = accountDAO.createAccount(name, balance, currencyCode);
         assertThat(account, equalTo(accountDAO.getAccount(account.getId())));
         return account;
     }
 
-    private AccountDAO getAccountDAO() {
+    private static AccountDAO getAccountDAO() {
         return AbstractFactory.getFactory(AbstractFactory.FactoryType.DAO).getAccountDAO();
+    }
+
+    private void expectedExceptionThrow(Class<CustomException> exceptionType, String exceptionMessage) {
+        expectedExceptionThrown.expect(exceptionType);
+        expectedExceptionThrown.expectMessage(equalTo(exceptionMessage));
     }
 }

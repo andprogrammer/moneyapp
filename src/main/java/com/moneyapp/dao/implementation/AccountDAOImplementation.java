@@ -11,7 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.moneyapp.utils.Utils.*;
+import static com.moneyapp.utils.Utils.validateAmountLessThanZero;
+import static com.moneyapp.utils.Utils.validateId;
 
 public class AccountDAOImplementation implements AccountDAO {
 

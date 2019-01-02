@@ -12,7 +12,7 @@ import static com.moneyapp.utils.Utils.*;
 
 public class TransactionDAOImplementation implements TransactionDAO {
 
-    private AccountDAOImplementation accountDAOImplementation;
+    protected AccountDAOImplementation accountDAOImplementation;
     private final static Logger logger = Logger.getLogger(new Throwable().getStackTrace()[0].getClassName().getClass());
 
     public TransactionDAOImplementation(final AccountDAOImplementation accountDAOImplementation) {

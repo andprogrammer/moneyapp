@@ -25,11 +25,17 @@ public class Account {
         return id;
     }
 
-    public void setId(String id) { this.id = id; }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-    public String getUserName() { return userName; }
+    public String getUserName() {
+        return userName;
+    }
 
-    public void setUserName(String userName) { this.userName = userName; }
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     public BigDecimal getBalance() {
         return balance;
@@ -44,7 +50,9 @@ public class Account {
         return currencyCode;
     }
 
-    public void setCurrencyCode(String currencyCode) { this.currencyCode = currencyCode; }
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
 
     @Override
     public boolean equals(Object o) {
