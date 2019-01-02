@@ -23,7 +23,7 @@ mvn clean install
 | GET | /account/{accountId}/balance | get account balance |
 | PUT | /account/{accountId}/withdraw/{amount} | withdraw from account |
 | PUT | /account/{accountId}/deposit/{amount} | deposit to account |
-| DELETE | /account/{accountId} | remove account by accountId |
+| DELETE | /account/{accountId} | remove account |
 | PUT | /user/create?name=...&email=... | create a new user |
 | GET | /user/all | get users |
 | GET | /user/{userId} | get user |
