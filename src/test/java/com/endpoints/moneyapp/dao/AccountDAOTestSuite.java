@@ -110,8 +110,8 @@ public class AccountDAOTestSuite {
         return AbstractFactory.getFactory(AbstractFactory.FactoryType.DAO).getAccountDAO();
     }
 
-    private void expectedExceptionThrow(Class<CustomException> exceptionType, String exceptionMessage) {
-        expectedExceptionThrown.expect(exceptionType);
+    private <T> void expectedExceptionThrow(Class<T> exceptionType, String exceptionMessage) {
+        expectedExceptionThrown.expect((Class<? extends Throwable>) exceptionType);
         expectedExceptionThrown.expectMessage(equalTo(exceptionMessage));
     }
 }

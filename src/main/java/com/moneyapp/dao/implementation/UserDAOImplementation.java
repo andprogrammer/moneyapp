@@ -36,7 +36,7 @@ public class UserDAOImplementation implements UserDAO {
         User user = new User(name, email);
         validate(user);
         if (users.containsValue(user))
-            throw new CustomException("User with id " + user + " already exists");
+            throw new CustomException("User " + user + " already exists");
         if (logger.isDebugEnabled())
             logger.debug(new Throwable().getStackTrace()[0].getMethodName() + "() " + user);
         users.put(user.getId(), user);

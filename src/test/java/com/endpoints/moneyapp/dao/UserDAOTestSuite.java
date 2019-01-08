@@ -100,8 +100,8 @@ public class UserDAOTestSuite {
         userDAO.deleteUser(userId);
     }
 
-    private void expectedExceptionThrow(Class<CustomException> exceptionType, String exceptionMessage) {
-        expectedExceptionThrown.expect(exceptionType);
+    private <T> void expectedExceptionThrow(Class<T> exceptionType, String exceptionMessage) {
+        expectedExceptionThrown.expect((Class<? extends Throwable>) exceptionType);
         expectedExceptionThrown.expectMessage(equalTo(exceptionMessage));
     }
 

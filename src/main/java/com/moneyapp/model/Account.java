@@ -62,8 +62,8 @@ public class Account {
             return false;
 
         Account account = (Account) o;
-        if (!id.equals(account.id))
-            return false;
+//        if (!id.equals(account.id))
+//            return false;
         if (!userName.equals(account.userName))
             return false;
         if (!balance.equals(account.balance))

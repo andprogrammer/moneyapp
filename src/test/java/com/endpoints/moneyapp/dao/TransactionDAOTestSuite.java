@@ -77,12 +77,12 @@ public class TransactionDAOTestSuite {
         return new TransactionDAOImplementationHelper(new AccountDAOImplementation());
     }
 
-    void validateBalance(BigDecimal expectedBalance, Account account) {
-        assertThat(expectedBalance, equalTo(account.getBalance()));
+    private <T> void expectedExceptionThrow(Class<T> exceptionType, String exceptionMessage) {
+        expectedExceptionThrown.expect((Class<? extends Throwable>) exceptionType);
+        expectedExceptionThrown.expectMessage(equalTo(exceptionMessage));
     }
 
-    private void expectedExceptionThrow(Class<CustomException> exceptionType, String exceptionMessage) {
-        expectedExceptionThrown.expect(exceptionType);
-        expectedExceptionThrown.expectMessage(equalTo(exceptionMessage));
+    void validateBalance(BigDecimal expectedBalance, Account account) {
+        assertThat(expectedBalance, equalTo(account.getBalance()));
     }
 }

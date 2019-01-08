@@ -19,6 +19,4 @@ public interface AccountDAO {
     int deleteAccount(String id) throws CustomException;
 
     Account updateAccountBalance(String id, BigDecimal amount) throws CustomException;
-
-    void addAccount(Account account) throws CustomException;
 }

@@ -69,10 +69,12 @@ public class UserServiceTestSuite {
 
     @Test
     public void testGetUser() {
-        String userId = createUser();
+        String name = "Andrzej";
+        String email = "test@gmail.com";
+        String userId = createUser(name, email);
         Response response = request("GET", "/user/" + userId);
         JSONObject json = new JSONObject(response.body);
-        assertJSON(response, json, "Andrzej", "test@gmail.com");
+        assertJSON(response, json, name, email);
     }
 
     @Test
@@ -84,26 +86,28 @@ public class UserServiceTestSuite {
 
     @Test
     public void testCreateUser() {
-        createUser();
+        createUser("Andrzej", "test@gmail.com");
     }
 
     @Test
     public void testCreateExistingUser() {
-        createUser();
+        String name = "Andrzej";
+        String email = "test@gmail.com";
+        createUser(name, email);
         expectedExceptionThrow(CustomException.class, "Response error");
-        createUser();
+        createUser(name, email);
     }
 
     @Test
     public void testUpdateUser() {
-        String userId = createUser();
+        String userId = createUser("Andrzej", "test@gmail.com");
         Response response = request("POST", "/user/" + userId + "?name=Tom&email=tom@yahoo.com");
         JSONObject json = new JSONObject(response.body);
         assertJSON(response, json, "Tom", "tom@yahoo.com");
     }
 
     @Test
-    public void testUpdateNotExistingUser() {
+    public void testUpdateNoExistingUser() {
         String noExistingUserId = "2048";
         expectedExceptionThrow(CustomException.class, "Response error");
         request("POST", "/user/" + noExistingUserId + "?name=Tom&email=tom@yahoo.com");
@@ -111,13 +115,13 @@ public class UserServiceTestSuite {
 
     @Test
     public void testDeleteUser() {
-        String userId = createUser();
+        String userId = createUser("Andrzej", "test@gmail.com");
         Response response = request("DELETE", "/user/" + userId);
         assertThat(SUCCESS_RESPONSE, equalTo(response.status));
     }
 
     @Test
-    public void testDeleteNotExistingUser() {
+    public void testDeleteNoExistingUser() {
         String noExistingUserId = "2048";
         expectedExceptionThrow(CustomException.class, "Response error");
         request("DELETE", "/user/" + noExistingUserId);
@@ -128,10 +132,10 @@ public class UserServiceTestSuite {
         expectedExceptionThrown.expectMessage(equalTo(exceptionMessage));
     }
 
-    private String createUser() {
-        Response response = request("PUT", "/user/create?name=Andrzej&email=test@gmail.com");
+    private String createUser(final String name, final String email) {
+        Response response = request("PUT", "/user/create?name=" + name + "&email=" + email);
         JSONObject json = new JSONObject(response.body);
-        assertJSON(response, json, "Andrzej", "test@gmail.com");
+        assertJSON(response, json, name, email);
         return json.getString("id");
     }
 

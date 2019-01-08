@@ -8,7 +8,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.math.BigDecimal;
 
@@ -23,6 +25,9 @@ import static spark.Spark.stop;
 public class AccountServiceTestSuite {
 
     private final static Logger logger = Logger.getLogger(new Throwable().getStackTrace()[0].getClassName().getClass());
+
+    @Rule
+    public ExpectedException expectedExceptionThrown = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -83,7 +88,21 @@ public class AccountServiceTestSuite {
     }
 
     @Test
+    public void testGetNoExistingAccount() throws CustomException {
+        String noExistingAccountId = "1024";
+        expectedExceptionThrow(CustomException.class, "Response error");
+        request("GET", "/account/" + noExistingAccountId);
+    }
+
+    @Test
     public void testCreateAccount() throws CustomException {
+        createAccount("Andrzej", "1000", "USD");
+    }
+
+    @Test
+    public void testCreateExistingAccount() throws CustomException {
+        createAccount("Andrzej", "1000", "USD");
+        expectedExceptionThrow(CustomException.class, "Response error");
         createAccount("Andrzej", "1000", "USD");
     }
 
@@ -99,11 +118,25 @@ public class AccountServiceTestSuite {
     }
 
     @Test
+    public void testGetNoExistingAccountBalance() throws CustomException {
+        String noExistingAccountId = "1024";
+        expectedExceptionThrow(CustomException.class, "Response error");
+        request("GET", "/account/" + noExistingAccountId + "/balance");
+    }
+
+    @Test
     public void testDeleteAccount() throws CustomException {
         String accountId = createAccount("Andrzej", "1000", "USD");
         Response response = request("DELETE", "/account/" + accountId);
         assertThat(response.body, equalTo(Integer.toString(SUCCESSFUL_RESPONSE)));
         assertThat(SUCCESS_RESPONSE, equalTo(response.status));
+    }
+
+    @Test
+    public void testDeleteNoExistingAccount() throws CustomException {
+        String noExistingAccountId = "1024";
+        expectedExceptionThrow(CustomException.class, "Response error");
+        request("DELETE", "/account/" + noExistingAccountId);
     }
 
     @Test
@@ -118,6 +151,14 @@ public class AccountServiceTestSuite {
     }
 
     @Test
+    public void testNoExistingAccountWithdraw() throws CustomException {
+        String noExistingAccountId = "1024";
+        expectedExceptionThrow(CustomException.class, "Response error");
+        String amount = "128";
+        request("PUT", "/account/" + noExistingAccountId + "/withdraw/" + amount);
+    }
+
+    @Test
     public void testAccountDeposit() throws CustomException {
         String name = "Andrzej";
         String currencyCode = "USD";
@@ -126,6 +167,19 @@ public class AccountServiceTestSuite {
         Response response = request("PUT", "/account/" + accountId + "/deposit/" + amount);
         JSONObject json = new JSONObject(response.body);
         assertJSON(response, json, name, "1256", currencyCode);
+    }
+
+    @Test
+    public void testNoExistingAccountDeposit() throws CustomException {
+        String noExistingAccountId = "1024";
+        expectedExceptionThrow(CustomException.class, "Response error");
+        String amount = "256";
+        request("PUT", "/account/" + noExistingAccountId + "/deposit/" + amount);
+    }
+
+    private <T> void expectedExceptionThrow(Class<T> exceptionType, String exceptionMessage) {
+        expectedExceptionThrown.expect((Class<? extends Throwable>) exceptionType);
+        expectedExceptionThrown.expectMessage(equalTo(exceptionMessage));
     }
 
     private void checkResults(String accountId, String accountUserName, BigDecimal accountBalance, String currencyCode, JSONObject firstJSONObject, JSONObject secondJSONObject) {

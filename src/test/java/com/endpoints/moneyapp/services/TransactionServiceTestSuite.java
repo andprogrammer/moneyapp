@@ -9,7 +9,9 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.math.BigDecimal;
 
@@ -26,6 +28,9 @@ public class TransactionServiceTestSuite {
 
     public static final AccountDAOImplementation ACCOUNT_SERVICE = new AccountDAOImplementation();
     private final static Logger logger = Logger.getLogger(new Throwable().getStackTrace()[0].getClassName().getClass());
+
+    @Rule
+    public ExpectedException expectedExceptionThrown = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -59,6 +64,25 @@ public class TransactionServiceTestSuite {
 
         validateAccountBalance(fromAccountId, 936);
         validateAccountBalance(toAccountId, 914);
+    }
+
+    @Test
+    public void testTransferTransactionNegativeAmount() throws CustomException {
+        String fromAccountId = createAccount("Andrzej", "1000", "USD");
+        String toAccountId = createAccount("Tom", "850", "USD");
+        String amount = "-64";
+        String currencyCode = "USD";
+
+        assertNotNull(fromAccountId);
+        assertNotNull(toAccountId);
+
+        expectedExceptionThrow(CustomException.class, "Response error");
+        request("POST", "/transaction/" + fromAccountId + "/" + toAccountId + "/" + amount + "/" + currencyCode);
+    }
+
+    private <T> void expectedExceptionThrow(Class<T> exceptionType, String exceptionMessage) {
+        expectedExceptionThrown.expect((Class<? extends Throwable>) exceptionType);
+        expectedExceptionThrown.expectMessage(equalTo(exceptionMessage));
     }
 
     private void validateAccountBalance(String accountId, int balance) {

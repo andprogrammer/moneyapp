@@ -20,7 +20,6 @@ public class AccountDAOImplementation implements AccountDAO {
     private final static Logger logger = Logger.getLogger(new Throwable().getStackTrace()[0].getClassName().getClass());
 
     public List<Account> getAllAccounts() throws CustomException {
-        validateAccount();
         if (logger.isDebugEnabled())
             logger.debug(new Throwable().getStackTrace()[0].getMethodName() + "() Number of accounts=" + accounts.size());
         return new ArrayList<>(accounts.values());
@@ -28,20 +27,21 @@ public class AccountDAOImplementation implements AccountDAO {
 
     public Account getAccount(String id) throws CustomException {
         validateId(id);
-        validateAccount();
-        checkIfIdAlreadyExists(id);
+        if (!accounts.containsKey(id))
+            throw new CustomException("Account with id " + id + " not found");
         if (logger.isDebugEnabled())
             logger.debug(new Throwable().getStackTrace()[0].getMethodName() + "() " + accounts.get(id));
         return accounts.get(id);
     }
 
     public Account createAccount(String userName, BigDecimal balance, String currencyCode) throws CustomException {
-        validateAccount(userName, balance, currencyCode);
         Account account = new Account(userName, balance, currencyCode);
-        checkIfAccountAlreadyExists(account);
+        validateAccount(account);
+        if (accounts.containsValue(account))
+            throw new CustomException("Account " + account + " already exists");
         if (logger.isDebugEnabled())
             logger.debug(new Throwable().getStackTrace()[0].getMethodName() + "() " + account);
-        addAccount(account);
+        accounts.put(account.getId(), account);
         return account;
     }
 
@@ -51,7 +51,6 @@ public class AccountDAOImplementation implements AccountDAO {
 
     public int deleteAccount(String id) throws CustomException {
         validateId(id);
-        validateAccount();
         if (logger.isDebugEnabled())
             logger.debug(new Throwable().getStackTrace()[0].getMethodName() + "() " + getAccount(id));
         synchronized (accounts) {
@@ -71,45 +70,11 @@ public class AccountDAOImplementation implements AccountDAO {
         return account;
     }
 
-    public void addAccount(Account account) throws CustomException {
-        validateAccount();
-        if (logger.isDebugEnabled())
-            logger.debug(new Throwable().getStackTrace()[0].getMethodName() + "() " + account);
-        accounts.put(account.getId(), account);
-    }
-
-    private void checkIfIdAlreadyExists(String id) throws CustomException {
-        if (!accounts.containsKey(id)) {
-            logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() Account with id=" + id + " already exists");
-            throw new CustomException("Account with id " + id + " not found");
-        }
-    }
-
-    private boolean checkIfAccountAlreadyExists(Account account) throws CustomException {
-        validateAccount();
-        if (accounts.containsValue(account)) {
-            logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() " + account + " already exists");
-            throw new CustomException("Account already exists");
-        }
-        return false;
-    }
-
-    private void validateAccount(String userName, BigDecimal balance, String currencyCode) throws CustomException {
-        if (userName == null || userName.isEmpty()) {
-            logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() Incorrect username=" + userName);
-            throw new CustomException("Empty 'userName' parameter");
-        }
-        validateAmountLessThanZero(balance);
-        if (currencyCode == null || currencyCode.isEmpty()) {
-            logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() Incorrect currency code=" + currencyCode);
-            throw new CustomException("Empty 'currencyCode' parameter");
-        }
-    }
-
-    private void validateAccount() throws CustomException {
-        if (accounts == null) {
-            logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() No accounts data");
-            throw new CustomException("Error reading accounts data");
-        }
+    private void validateAccount(Account account) throws CustomException {
+        if (account.getUserName() == null || account.getUserName().isEmpty())
+            throw new CustomException("Incorrect username=" + account.getUserName());
+        validateAmountLessThanZero(account.getBalance());
+        if (account.getCurrencyCode() == null || account.getCurrencyCode().isEmpty())
+            throw new CustomException("Incorrect currency code=" + account.getCurrencyCode());
     }
 }
