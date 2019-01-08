@@ -15,7 +15,5 @@ public interface UserDAO {
 
     User updateUser(String id, String name, String email) throws CustomException;
 
-    void addUser(User user) throws CustomException;
-
     int deleteUser(String id) throws CustomException;
 }

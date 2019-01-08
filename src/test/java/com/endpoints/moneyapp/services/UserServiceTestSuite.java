@@ -1,13 +1,16 @@
 package com.endpoints.moneyapp.services;
 
 import com.moneyapp.dao.implementation.UserDAOImplementation;
+import com.moneyapp.exception.CustomException;
 import com.moneyapp.service.UserService;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static com.endpoints.moneyapp.utils.Utils.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,6 +23,9 @@ import static spark.Spark.stop;
 public class UserServiceTestSuite {
 
     private final static Logger logger = Logger.getLogger(new Throwable().getStackTrace()[0].getClassName().getClass());
+
+    @Rule
+    public ExpectedException expectedExceptionThrown = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -70,7 +76,21 @@ public class UserServiceTestSuite {
     }
 
     @Test
+    public void testGetNoExistingUser() {
+        String noExistingUserId = "2048";
+        expectedExceptionThrow(CustomException.class, "Response error");
+        request("GET", "/user/" + noExistingUserId);
+    }
+
+    @Test
     public void testCreateUser() {
+        createUser();
+    }
+
+    @Test
+    public void testCreateExistingUser() {
+        createUser();
+        expectedExceptionThrow(CustomException.class, "Response error");
         createUser();
     }
 
@@ -83,10 +103,29 @@ public class UserServiceTestSuite {
     }
 
     @Test
+    public void testUpdateNotExistingUser() {
+        String noExistingUserId = "2048";
+        expectedExceptionThrow(CustomException.class, "Response error");
+        request("POST", "/user/" + noExistingUserId + "?name=Tom&email=tom@yahoo.com");
+    }
+
+    @Test
     public void testDeleteUser() {
         String userId = createUser();
         Response response = request("DELETE", "/user/" + userId);
         assertThat(SUCCESS_RESPONSE, equalTo(response.status));
+    }
+
+    @Test
+    public void testDeleteNotExistingUser() {
+        String noExistingUserId = "2048";
+        expectedExceptionThrow(CustomException.class, "Response error");
+        request("DELETE", "/user/" + noExistingUserId);
+    }
+
+    private <T> void expectedExceptionThrow(Class<T> exceptionType, String exceptionMessage) {
+        expectedExceptionThrown.expect((Class<? extends Throwable>) exceptionType);
+        expectedExceptionThrown.expectMessage(equalTo(exceptionMessage));
     }
 
     private String createUser() {

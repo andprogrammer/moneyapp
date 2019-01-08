@@ -14,8 +14,9 @@ public class Utils {
 
     public static void validateId(String id) throws CustomException {
         if (id == null || id.isEmpty()) {
-            logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() Incorrect id=" + id);
-            throw new CustomException("Argument 'id' cannot be empty");
+            String errorMessage = "Incorrect id=" + id;
+            logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() " + errorMessage);
+            throw new CustomException(errorMessage);
         }
     }
 

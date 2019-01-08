@@ -1,6 +1,7 @@
 package com.endpoints.moneyapp.utils;
 
 import com.moneyapp.exception.CustomException;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import spark.utils.IOUtils;
 
@@ -13,7 +14,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 
 public class Utils {
@@ -21,6 +21,7 @@ public class Utils {
     public static final int SUCCESS_RESPONSE = 200;
     public static final String HTTP_LOCALHOST = "http://localhost";
     public static final String PORT = "4567";
+    private final static Logger logger = Logger.getLogger(new Throwable().getStackTrace()[0].getClassName().getClass());
 
     public static <T> void assertAnyOf(T actual, Pair<T, T> expected) {
         assertThat(actual, anyOf(equalTo(expected.left), equalTo(expected.right)));
@@ -36,9 +37,13 @@ public class Utils {
             String body = IOUtils.toString(connection.getInputStream());
             return new Response(connection.getResponseCode(), body);
         } catch (IOException e) {
-            e.printStackTrace();
-            fail("Sending request failed: " + e.getMessage());
-            return null;
+            logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() " + e.getMessage());
+            System.out.println("Andrzej 1");
+            System.out.println("Andrzej 2=" + e.getMessage());
+            System.out.println("Andrzej 3=" + e.toString());
+//            e.printStackTrace();
+//            fail("Sending request failed: " + e.getMessage());
+            throw new CustomException("Response error");
         }
     }
 

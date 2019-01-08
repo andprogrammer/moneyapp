@@ -18,7 +18,6 @@ public class UserDAOImplementation implements UserDAO {
     private final static Logger logger = Logger.getLogger(new Throwable().getStackTrace()[0].getClassName().getClass());
 
     public List<User> getAllUsers() throws CustomException {
-        validateUsers();
         if (logger.isDebugEnabled())
             logger.debug(new Throwable().getStackTrace()[0].getMethodName() + "() Number of users=" + users.size());
         return new ArrayList<>(users.values());
@@ -26,20 +25,21 @@ public class UserDAOImplementation implements UserDAO {
 
     public User getUser(String id) throws CustomException {
         validateId(id);
-        validateUsers();
-        checkIfIdAlreadyExists(id);
+        if (!users.containsKey(id))
+            throw new CustomException("User with id " + id + " not found");
         if (logger.isDebugEnabled())
             logger.debug(new Throwable().getStackTrace()[0].getMethodName() + "() " + users.get(id));
         return users.get(id);
     }
 
     public User createUser(String name, String email) throws CustomException {
-        checkConstraint(name, email);
         User user = new User(name, email);
-        checkIfUserAlreadyExists(user);
+        validate(user);
+        if (users.containsValue(user))
+            throw new CustomException("User with id " + user + " already exists");
         if (logger.isDebugEnabled())
             logger.debug(new Throwable().getStackTrace()[0].getMethodName() + "() " + user);
-        addUser(user);
+        users.put(user.getId(), user);
         return user;
     }
 
@@ -55,16 +55,8 @@ public class UserDAOImplementation implements UserDAO {
         return user;
     }
 
-    public void addUser(User user) throws CustomException {
-        validateUsers();
-        if (logger.isDebugEnabled())
-            logger.debug(new Throwable().getStackTrace()[0].getMethodName() + "() " + user);
-        users.put(user.getId(), user);
-    }
-
     public int deleteUser(String id) throws CustomException {
         validateId(id);
-        validateUsers();
         if (logger.isDebugEnabled())
             logger.debug(new Throwable().getStackTrace()[0].getMethodName() + "() " + getUser(id));
         synchronized (users) {
@@ -73,37 +65,10 @@ public class UserDAOImplementation implements UserDAO {
         return 0;
     }
 
-    private void checkIfIdAlreadyExists(String id) throws CustomException {
-        if (!users.containsKey(id)) {
-            logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() User with id=" + id + " already exists");
-            throw new CustomException("User with id " + id + " not found");
-        }
-    }
-
-    private boolean checkIfUserAlreadyExists(User user) throws CustomException {
-        validateUsers();
-        if (users.containsValue(user)) {
-            logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() " + user + " already exists");
-            throw new CustomException("User already exists");
-        }
-        return false;
-    }
-
-    private void checkConstraint(String name, String email) throws CustomException {
-        if (name == null || name.isEmpty()) {
-            logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() Incorrect name=" + name);
-            throw new CustomException("Argument 'name' cannot be empty");
-        }
-        if (email == null || email.isEmpty()) {
-            logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() Incorrect email=" + email);
-            throw new CustomException("Argument 'email' cannot be empty");
-        }
-    }
-
-    private void validateUsers() throws CustomException {
-        if (users == null) {
-            logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() No users data");
-            throw new CustomException("Error reading users data");
-        }
+    private void validate(User user) throws CustomException {
+        if (user.getName() == null || user.getName().isEmpty())
+            throw new CustomException("Incorrect name=" + user.getName());
+        if (user.getEmail() == null || user.getEmail().isEmpty())
+            throw new CustomException("Incorrect email=" + user.getEmail());
     }
 }
