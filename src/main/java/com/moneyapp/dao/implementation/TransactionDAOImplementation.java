@@ -25,8 +25,8 @@ public class TransactionDAOImplementation implements TransactionDAO {
         Account fromAccount = accountDAOImplementation.getAccount(transaction.getFromAccountId());
         Account toAccount = accountDAOImplementation.getAccount(transaction.getToAccountId());
 
-        checkCurrencyCodes(fromAccount.getCurrencyCode(), toAccount.getCurrencyCode());
-        checkCurrencyCodes(transaction.getCurrencyCode(), fromAccount.getCurrencyCode());
+        validateCurrencyCodes(fromAccount.getCurrencyCode(), toAccount.getCurrencyCode());
+        validateCurrencyCodes(transaction.getCurrencyCode(), fromAccount.getCurrencyCode());
 
         BigDecimal amount = transaction.getAmount();
         validateAmountLessThanOrEqualZero(amount);
@@ -40,10 +40,17 @@ public class TransactionDAOImplementation implements TransactionDAO {
 
         synchronized (this) {
             BigDecimal fromAccountNewBalance = fromAccount.getBalance().subtract(amount);
-            validateAmountLessThanZero(fromAccountNewBalance);
+            validateAmountLessThanZero(amount);
             fromAccount.setBalance(fromAccountNewBalance);
             toAccount.setBalance(toAccount.getBalance().add(amount));
         }
         return 0;
+    }
+
+    private void validateAmountLessThanZero(BigDecimal amount) {
+        if (null == amount || amount.compareTo(BigDecimal.ZERO) < 0) {
+            logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() Incorrect amount=" + amount);
+            throw new CustomException("Not enough amount on account");
+        }
     }
 }

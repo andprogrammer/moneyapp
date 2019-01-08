@@ -38,11 +38,6 @@ public class Utils {
             return new Response(connection.getResponseCode(), body);
         } catch (IOException e) {
             logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() " + e.getMessage());
-            System.out.println("Andrzej 1");
-            System.out.println("Andrzej 2=" + e.getMessage());
-            System.out.println("Andrzej 3=" + e.toString());
-//            e.printStackTrace();
-//            fail("Sending request failed: " + e.getMessage());
             throw new CustomException("Response error");
         }
     }

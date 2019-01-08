@@ -52,16 +52,26 @@ public class UserDAOTestSuite {
     }
 
     @Test
-    public void testGetNonExistingUserById() throws CustomException {
-        String userId = "1024";
-        expectedExceptionThrow(CustomException.class, "User with id " + userId + " not found");
+    public void testGetNoExistingUser() throws CustomException {
         UserDAO userDAO = getUserDAO();
-        userDAO.getUser(userId);
+        String noExistingUserId = "2048";
+        expectedExceptionThrow(CustomException.class, "User with id " + noExistingUserId + " not found");
+        userDAO.getUser(noExistingUserId);
     }
 
     @Test
     public void testCreateUser() throws CustomException {
         createUser();
+    }
+
+    @Test
+    public void testCreateExistingUser() {
+        UserDAO userDAO = getUserDAO();
+        String name = "Andrzej";
+        String email = "test@gmail.com";
+        userDAO.createUser(name, email);
+        expectedExceptionThrow(CustomException.class, "User Name=" + name + " Email=" + email + " already exists");
+        userDAO.createUser(name, email);
     }
 
     @Test
@@ -75,12 +85,12 @@ public class UserDAOTestSuite {
     }
 
     @Test
-    public void testUpdateNonExistingUser() throws CustomException {
-        String userId = "2048";
-        expectedExceptionThrow(CustomException.class, "User with id " + userId + " not found");
+    public void testUpdateNoExistingUser() throws CustomException {
+        String noExistingUserId = "2048";
+        expectedExceptionThrow(CustomException.class, "User with id " + noExistingUserId + " not found");
         UserDAO userDAO = getUserDAO();
         User user = createUser();
-        userDAO.updateUser(userId, user.getName(), user.getEmail());
+        userDAO.updateUser(noExistingUserId, user.getName(), user.getEmail());
     }
 
     @Test
@@ -93,11 +103,11 @@ public class UserDAOTestSuite {
     }
 
     @Test
-    public void testDeleteNonExistingUser() throws CustomException {
-        String userId = "512";
-        expectedExceptionThrow(CustomException.class, "User with id " + userId + " not found");
+    public void testDeleteNoExistingUser() throws CustomException {
+        String noExistingUserId = "512";
+        expectedExceptionThrow(CustomException.class, "User with id " + noExistingUserId + " not found");
         UserDAO userDAO = getUserDAO();
-        userDAO.deleteUser(userId);
+        userDAO.deleteUser(noExistingUserId);
     }
 
     private <T> void expectedExceptionThrow(Class<T> exceptionType, String exceptionMessage) {

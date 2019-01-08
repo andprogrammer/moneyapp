@@ -53,16 +53,43 @@ public class AccountDAOTestSuite {
     }
 
     @Test
-    public void testGetNonExistingUser() throws CustomException {
-        String accountId = "128";
-        expectedExceptionThrow(CustomException.class, "Account with id " + accountId + " not found");
+    public void testGetNoExistingAccount() throws CustomException {
+        String noExistingAccountId = "128";
+        expectedExceptionThrow(CustomException.class, "Account with id " + noExistingAccountId + " not found");
         AccountDAO accountDAO = getAccountDAO();
-        accountDAO.getAccount(accountId);
+        accountDAO.getAccount(noExistingAccountId);
     }
 
     @Test
     public void testCreateAccount() throws CustomException {
         createAccount("Andrzej", new BigDecimal("1000"), "USD");
+    }
+
+    @Test
+    public void testCreateExistingAccount() throws CustomException {
+        AccountDAO accountDAO = getAccountDAO();
+        String userName = "Andrzej";
+        BigDecimal balance = new BigDecimal("1000");
+        String currencyCode = "USD";
+        accountDAO.createAccount(userName, balance, currencyCode);
+        expectedExceptionThrow(CustomException.class, "Account UserName=" + userName + " Balance=" + balance + " CurrencyCode=" + currencyCode + " already exists");
+        accountDAO.createAccount(userName, balance, currencyCode);
+    }
+
+    @Test
+    public void testGetAccountBalance() throws CustomException {
+        BigDecimal balance = new BigDecimal("1000");
+        AccountDAO accountDAO = getAccountDAO();
+        Account account = accountDAO.createAccount("Andrzej", balance, "USD");
+        assertThat(balance, equalTo(accountDAO.getBalance(account.getId())));
+    }
+
+    @Test
+    public void testGetNoExistingAccountBalance() throws CustomException {
+        String noExistingAccountId = "1024";
+        AccountDAO accountDAO = getAccountDAO();
+        expectedExceptionThrow(CustomException.class, "Account with id " + noExistingAccountId + " not found");
+        accountDAO.getBalance(noExistingAccountId);
     }
 
     @Test
@@ -75,11 +102,11 @@ public class AccountDAOTestSuite {
     }
 
     @Test
-    public void testDeleteNonExistingAccount() throws CustomException {
-        String accountId = "64";
-        expectedExceptionThrow(CustomException.class, "Account with id " + accountId + " not found");
+    public void testDeleteNoExistingAccount() throws CustomException {
+        String noExistingAccountId = "64";
+        expectedExceptionThrow(CustomException.class, "Account with id " + noExistingAccountId + " not found");
         AccountDAO accountDAO = getAccountDAO();
-        accountDAO.deleteAccount(accountId);
+        accountDAO.deleteAccount(noExistingAccountId);
     }
 
     @Test
@@ -92,16 +119,16 @@ public class AccountDAOTestSuite {
     }
 
     @Test
-    public void testUpdateAccountBalanceNonExistingAccount() throws CustomException {
-        String accountId = "2048";
-        expectedExceptionThrow(CustomException.class, "Account with id " + accountId + " not found");
+    public void testUpdateAccountBalanceNoExistingAccount() throws CustomException {
+        String noExistingAccountId = "2048";
+        expectedExceptionThrow(CustomException.class, "Account with id " + noExistingAccountId + " not found");
         AccountDAO accountDAO = getAccountDAO();
-        accountDAO.updateAccountBalance(accountId, new BigDecimal("770"));
+        accountDAO.updateAccountBalance(noExistingAccountId, new BigDecimal("770"));
     }
 
-    private static Account createAccount(String name, BigDecimal balance, String currencyCode) throws CustomException {
+    private static Account createAccount(String userName, BigDecimal balance, String currencyCode) throws CustomException {
         AccountDAO accountDAO = getAccountDAO();
-        Account account = accountDAO.createAccount(name, balance, currencyCode);
+        Account account = accountDAO.createAccount(userName, balance, currencyCode);
         assertThat(account, equalTo(accountDAO.getAccount(account.getId())));
         return account;
     }

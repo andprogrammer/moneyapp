@@ -51,9 +51,9 @@ public class Transaction {
 
     @Override
     public String toString() {
-        return "fromAccountId=" + fromAccountId
-                + "\\toAccountId=" + toAccountId
-                + "\\amount=" + amount
-                + "\\currencyCode=" + currencyCode;
+        return "FromAccountId=" + fromAccountId
+                + " ToAccountId=" + toAccountId
+                + " Amount=" + amount
+                + " CurrencyCode=" + currencyCode;
     }
 }

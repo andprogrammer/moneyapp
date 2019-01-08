@@ -73,9 +73,6 @@ public class Account {
 
     @Override
     public String toString() {
-        return "id=" + id
-                + "\\userName=" + userName
-                + "\\balance=" + balance
-                + "\\currencyCode=" + currencyCode;
+        return "UserName=" + userName + " Balance=" + balance + " CurrencyCode=" + currencyCode;
     }
 }

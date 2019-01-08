@@ -51,13 +51,13 @@ public class TransactionDAOTestSuite {
     }
 
     @Test
-    public void testTransactionTransferNonExistingAccount() throws CustomException {
+    public void testTransactionTransferNoExistingAccount() throws CustomException {
         TransactionDAOImplementationHelper transactionDAO = getTransactionDAO();
         Account accountFrom = transactionDAO.createAccount("Andrzej", new BigDecimal("1000"), "USD");
 
-        String accountId = "4096";
-        expectedExceptionThrow(CustomException.class, "Account with id " + accountId + " not found");
-        Transaction transaction = new Transaction(accountFrom.getId(), accountId, new BigDecimal("256"), "USD");
+        String noExistingAccountId = "4096";
+        expectedExceptionThrow(CustomException.class, "Account with id " + noExistingAccountId + " not found");
+        Transaction transaction = new Transaction(accountFrom.getId(), noExistingAccountId, new BigDecimal("256"), "USD");
         assertThat(0, equalTo(transactionDAO.transfer(transaction)));
     }
 

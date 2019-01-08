@@ -20,7 +20,6 @@ public class Application {
     private static void runApplication() {
         logger.info(new Throwable().getStackTrace()[0].getMethodName() + "() Starting Money Application");
         startServices();
-        logger.info(new Throwable().getStackTrace()[0].getMethodName() + "() Stopping Money Application");
     }
 
     private static void startServices() {
