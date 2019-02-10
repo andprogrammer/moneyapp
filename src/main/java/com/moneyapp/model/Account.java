@@ -33,10 +33,6 @@ public class Account {
         return userName;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
     public BigDecimal getBalance() {
         return balance;
     }
@@ -48,10 +44,6 @@ public class Account {
 
     public String getCurrencyCode() {
         return currencyCode;
-    }
-
-    public void setCurrencyCode(String currencyCode) {
-        this.currencyCode = currencyCode;
     }
 
     @Override

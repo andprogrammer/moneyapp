@@ -5,7 +5,7 @@ import com.moneyapp.exception.CustomException;
 import com.moneyapp.exception.ResponseError;
 import com.moneyapp.utils.JSONUtil;
 
-import static com.moneyapp.utils.JSONUtil.FAILED_RESPONSE;
+import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static spark.Spark.*;
 
 public class UserService {
@@ -30,7 +30,7 @@ public class UserService {
             int responseStatus = userDAO.deleteUser(
                     request.params(":id"));
             if (0 != responseStatus) {
-                response.status(FAILED_RESPONSE);
+                response.status(SC_BAD_REQUEST);
                 return new ResponseError("Error. User not deleted");
             }
             return 0;
@@ -41,12 +41,12 @@ public class UserService {
         });
 
         exception(IllegalArgumentException.class, (exception, request, response) -> {
-            response.status(FAILED_RESPONSE);
+            response.status(SC_BAD_REQUEST);
             response.body(JSONUtil.toJson(new ResponseError(exception)));
         });
 
         exception(CustomException.class, (exception, request, response) -> {
-            response.status(FAILED_RESPONSE);
+            response.status(SC_BAD_REQUEST);
             response.body(JSONUtil.toJson(new ResponseError(exception)));
         });
     }

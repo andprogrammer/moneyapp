@@ -3,7 +3,6 @@ package com.endpoints.moneyapp.services;
 import com.moneyapp.dao.implementation.AccountDAOImplementation;
 import com.moneyapp.exception.CustomException;
 import com.moneyapp.service.AccountService;
-import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.After;
@@ -15,7 +14,7 @@ import org.junit.rules.ExpectedException;
 import java.math.BigDecimal;
 
 import static com.endpoints.moneyapp.utils.Utils.*;
-import static com.moneyapp.utils.JSONUtil.SUCCESSFUL_RESPONSE;
+import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static spark.Spark.awaitInitialization;
@@ -24,18 +23,11 @@ import static spark.Spark.stop;
 
 public class AccountServiceTestSuite {
 
-    private final static Logger logger = Logger.getLogger(new Throwable().getStackTrace()[0].getClassName().getClass());
-
     @Rule
     public ExpectedException expectedExceptionThrown = ExpectedException.none();
 
     @Before
     public void setUp() {
-        if (logger.isDebugEnabled())
-            logger.debug(new Throwable().getStackTrace()[0].getMethodName()
-                    + "() Starting testSuite "
-                    + new Throwable().getStackTrace()[0].getClassName()
-                    + " on " + HTTP_LOCALHOST + ":" + PORT);
         new AccountService(new AccountDAOImplementation());
         awaitInitialization();
     }
@@ -53,7 +45,7 @@ public class AccountServiceTestSuite {
 
         Response response = request("PUT", "/account/create?username=" + firstAccountUserName + "&balance=" + firstAccountBalance + "&currencycode=" + firstCurrencyCode);
         JSONObject json = new JSONObject(response.body);
-        assertThat(SUCCESS_RESPONSE, equalTo(response.status));
+        assertThat(SC_OK, equalTo(response.status));
         String firstAccountId = json.getString("id");
 
         String secondAccountUserName = "Tom";
@@ -62,12 +54,12 @@ public class AccountServiceTestSuite {
 
         response = request("PUT", "/account/create?username=" + secondAccountUserName + "&balance=" + secondAccountBalance + "&currencycode=" + secondCurrencyCode);
         json = new JSONObject(response.body);
-        assertThat(SUCCESS_RESPONSE, equalTo(response.status));
+        assertThat(SC_OK, equalTo(response.status));
         String secondAccountId = json.getString("id");
 
         response = request("GET", "/account/all");
         JSONArray jsonarray = new JSONArray(response.body);
-        assertThat(SUCCESS_RESPONSE, equalTo(response.status));
+        assertThat(SC_OK, equalTo(response.status));
 
         JSONObject firstJSONObject = jsonarray.getJSONObject(0);
         JSONObject secondJSONObject = jsonarray.getJSONObject(1);
@@ -113,7 +105,7 @@ public class AccountServiceTestSuite {
         String currencyCode = "USD";
         String accountId = createAccount(name, balance, currencyCode);
         Response response = request("GET", "/account/" + accountId + "/balance");
-        assertThat(SUCCESS_RESPONSE, equalTo(response.status));
+        assertThat(SC_OK, equalTo(response.status));
         assertThat(response.body, equalTo("1000"));
     }
 
@@ -128,8 +120,8 @@ public class AccountServiceTestSuite {
     public void testDeleteAccount() throws CustomException {
         String accountId = createAccount("Andrzej", "1000", "USD");
         Response response = request("DELETE", "/account/" + accountId);
-        assertThat(response.body, equalTo(Integer.toString(SUCCESSFUL_RESPONSE)));
-        assertThat(SUCCESS_RESPONSE, equalTo(response.status));
+        assertThat(response.body, equalTo(Integer.toString(SC_OK)));
+        assertThat(SC_OK, equalTo(response.status));
     }
 
     @Test

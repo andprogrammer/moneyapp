@@ -15,11 +15,11 @@ import static com.moneyapp.utils.Utils.validateId;
 public class UserDAOImplementation implements UserDAO {
 
     private Map<String, User> users = new HashMap<>();
-    private final static Logger logger = Logger.getLogger(new Throwable().getStackTrace()[0].getClassName().getClass());
+    private final static Logger logger = Logger.getLogger(UserDAOImplementation.class);
 
     public List<User> getAllUsers() throws CustomException {
         if (logger.isDebugEnabled())
-            logger.debug(new Throwable().getStackTrace()[0].getMethodName() + "() Number of users=" + users.size());
+            logger.debug("Number of users=" + users.size());
         return new ArrayList<>(users.values());
     }
 
@@ -28,7 +28,7 @@ public class UserDAOImplementation implements UserDAO {
         if (!users.containsKey(id))
             throw new CustomException("User with id " + id + " not found");
         if (logger.isDebugEnabled())
-            logger.debug(new Throwable().getStackTrace()[0].getMethodName() + "() " + users.get(id));
+            logger.debug(users.get(id));
         return users.get(id);
     }
 
@@ -38,7 +38,7 @@ public class UserDAOImplementation implements UserDAO {
         if (users.containsValue(user))
             throw new CustomException("User " + user + " already exists");
         if (logger.isDebugEnabled())
-            logger.debug(new Throwable().getStackTrace()[0].getMethodName() + "() " + user);
+            logger.debug(user);
         users.put(user.getId(), user);
         return user;
     }
@@ -47,7 +47,7 @@ public class UserDAOImplementation implements UserDAO {
         validateId(id);
         User user = getUser(id);
         if (logger.isDebugEnabled())
-            logger.debug(new Throwable().getStackTrace()[0].getMethodName() + "() " + user);
+            logger.debug(user);
         synchronized (user) {
             user.setName(name);
             user.setEmail(email);
@@ -58,7 +58,7 @@ public class UserDAOImplementation implements UserDAO {
     public int deleteUser(String id) throws CustomException {
         validateId(id);
         if (logger.isDebugEnabled())
-            logger.debug(new Throwable().getStackTrace()[0].getMethodName() + "() " + getUser(id));
+            logger.debug(getUser(id));
         synchronized (users) {
             users.remove(id);
         }

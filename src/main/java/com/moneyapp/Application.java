@@ -11,19 +11,19 @@ import org.apache.log4j.Logger;
 
 public class Application {
 
-    private final static Logger logger = Logger.getLogger(new Throwable().getStackTrace()[0].getClassName().getClass());
+    private final static Logger logger = Logger.getLogger(Application.class);
 
     public static void main(String[] args) {
         runApplication();
     }
 
     private static void runApplication() {
-        logger.info(new Throwable().getStackTrace()[0].getMethodName() + "() Starting Money Application");
+        logger.info("Starting Money Application");
         startServices();
     }
 
     private static void startServices() {
-        AbstractFactory daoFactory = AbstractFactory.getFactory(AbstractFactory.FactoryType.DAO);
+        AbstractFactory daoFactory = AbstractFactory.getFactory();
         UserDAO userDAO = daoFactory.getUserDAO();
         AccountDAO accountDAO = daoFactory.getAccountDAO();
         TransactionDAO transactionDAO = daoFactory.getTransactionDAO();

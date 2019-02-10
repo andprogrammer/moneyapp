@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -18,10 +19,9 @@ import static org.junit.Assert.assertNotNull;
 
 public class Utils {
 
-    public static final int SUCCESS_RESPONSE = 200;
     public static final String HTTP_LOCALHOST = "http://localhost";
     public static final String PORT = "4567";
-    private final static Logger logger = Logger.getLogger(new Throwable().getStackTrace()[0].getClassName().getClass());
+    private final static Logger logger = Logger.getLogger(Utils.class);
 
     public static <T> void assertAnyOf(T actual, Pair<T, T> expected) {
         assertThat(actual, anyOf(equalTo(expected.left), equalTo(expected.right)));
@@ -37,7 +37,7 @@ public class Utils {
             String body = IOUtils.toString(connection.getInputStream());
             return new Response(connection.getResponseCode(), body);
         } catch (IOException e) {
-            logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() " + e.getMessage());
+            logger.error(e.getMessage());
             throw new CustomException("Response error");
         }
     }
@@ -63,7 +63,7 @@ public class Utils {
     }
 
     public static void assertJSON(Utils.Response response, JSONObject json, String name, String balance, String currencyCode) {
-        assertThat(SUCCESS_RESPONSE, equalTo(response.status));
+        assertThat(SC_OK, equalTo(response.status));
         assertNotNull(json.getString("id"));
         assertThat(name, equalTo(json.getString("userName")));
         assertThat(new BigDecimal(balance), equalTo(json.getBigDecimal("balance")));

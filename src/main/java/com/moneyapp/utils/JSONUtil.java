@@ -5,9 +5,6 @@ import spark.ResponseTransformer;
 
 public class JSONUtil {
 
-    public static final int SUCCESSFUL_RESPONSE = 200;
-    public static final int FAILED_RESPONSE = 400;
-
     public static String toJson(Object object) {
         return new Gson().toJson(object);
     }

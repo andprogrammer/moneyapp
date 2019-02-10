@@ -7,9 +7,9 @@ import com.moneyapp.utils.JSONUtil;
 
 import java.math.BigDecimal;
 
-import static com.moneyapp.utils.JSONUtil.FAILED_RESPONSE;
-import static com.moneyapp.utils.JSONUtil.SUCCESSFUL_RESPONSE;
 import static com.moneyapp.utils.Utils.validateAmountLessThanOrEqualZero;
+import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static spark.Spark.*;
 
 public class AccountService {
@@ -34,8 +34,8 @@ public class AccountService {
         delete("/account/:id", (request, response) -> {
             int responseStatus = accountDAO.deleteAccount(request.params(":id"));
             if (0 == responseStatus)
-                return SUCCESSFUL_RESPONSE;
-            response.status(FAILED_RESPONSE);
+                return SC_OK;
+            response.status(SC_BAD_REQUEST);
             return new ResponseError("Error. Account not deleted");
         }, JSONUtil.json());
 
@@ -59,12 +59,12 @@ public class AccountService {
         });
 
         exception(IllegalArgumentException.class, (exception, request, response) -> {
-            response.status(FAILED_RESPONSE);
+            response.status(SC_BAD_REQUEST);
             response.body(JSONUtil.toJson(new ResponseError(exception)));
         });
 
         exception(CustomException.class, (exception, request, response) -> {
-            response.status(FAILED_RESPONSE);
+            response.status(SC_BAD_REQUEST);
             response.body(JSONUtil.toJson(new ResponseError(exception)));
         });
     }

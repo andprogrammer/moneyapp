@@ -4,9 +4,7 @@ import com.moneyapp.dao.AbstractFactory;
 import com.moneyapp.dao.AccountDAO;
 import com.moneyapp.exception.CustomException;
 import com.moneyapp.model.Account;
-import org.apache.log4j.Logger;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -20,18 +18,8 @@ import static spark.Spark.stop;
 
 public class AccountDAOTestSuite {
 
-    private final static Logger logger = Logger.getLogger(new Throwable().getStackTrace()[0].getClassName().getClass());
-
     @Rule
     public ExpectedException expectedExceptionThrown = ExpectedException.none();
-
-    @Before
-    public void setUp() {
-        if (logger.isDebugEnabled())
-            logger.debug(new Throwable().getStackTrace()[0].getMethodName()
-                    + "() Starting testSuite "
-                    + new Throwable().getStackTrace()[0].getClassName());
-    }
 
     @After
     public void tearDown() {
@@ -134,7 +122,7 @@ public class AccountDAOTestSuite {
     }
 
     private static AccountDAO getAccountDAO() {
-        return AbstractFactory.getFactory(AbstractFactory.FactoryType.DAO).getAccountDAO();
+        return AbstractFactory.getFactory().getAccountDAO();
     }
 
     private <T> void expectedExceptionThrow(Class<T> exceptionType, String exceptionMessage) {

@@ -3,7 +3,6 @@ package com.endpoints.moneyapp.services;
 import com.moneyapp.dao.implementation.UserDAOImplementation;
 import com.moneyapp.exception.CustomException;
 import com.moneyapp.service.UserService;
-import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.After;
@@ -13,6 +12,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import static com.endpoints.moneyapp.utils.Utils.*;
+import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertNotNull;
@@ -22,18 +22,11 @@ import static spark.Spark.stop;
 
 public class UserServiceTestSuite {
 
-    private final static Logger logger = Logger.getLogger(new Throwable().getStackTrace()[0].getClassName().getClass());
-
     @Rule
     public ExpectedException expectedExceptionThrown = ExpectedException.none();
 
     @Before
     public void setUp() {
-        if (logger.isDebugEnabled())
-            logger.debug(new Throwable().getStackTrace()[0].getMethodName()
-                    + "() Starting testSuite "
-                    + new Throwable().getStackTrace()[0].getClassName()
-                    + " on " + HTTP_LOCALHOST + ":" + PORT);
         new UserService(new UserDAOImplementation());
         awaitInitialization();
     }
@@ -117,7 +110,7 @@ public class UserServiceTestSuite {
     public void testDeleteUser() {
         String userId = createUser("Andrzej", "test@gmail.com");
         Response response = request("DELETE", "/user/" + userId);
-        assertThat(SUCCESS_RESPONSE, equalTo(response.status));
+        assertThat(SC_OK, equalTo(response.status));
     }
 
     @Test
@@ -140,7 +133,7 @@ public class UserServiceTestSuite {
     }
 
     private void assertJSON(Response response, JSONObject json, String name, String email) {
-        assertThat(SUCCESS_RESPONSE, equalTo(response.status));
+        assertThat(SC_OK, equalTo(response.status));
         assertNotNull(json.get("id"));
         assertThat(name, equalTo(json.getString("name")));
         assertThat(email, equalTo(json.getString("email")));

@@ -17,11 +17,11 @@ import static com.moneyapp.utils.Utils.validateId;
 public class AccountDAOImplementation implements AccountDAO {
 
     private Map<String, Account> accounts = new HashMap<>();
-    private final static Logger logger = Logger.getLogger(new Throwable().getStackTrace()[0].getClassName().getClass());
+    private final static Logger logger = Logger.getLogger(AccountDAOImplementation.class);
 
     public List<Account> getAllAccounts() throws CustomException {
         if (logger.isDebugEnabled())
-            logger.debug(new Throwable().getStackTrace()[0].getMethodName() + "() Number of accounts=" + accounts.size());
+            logger.debug("Number of accounts=" + accounts.size());
         return new ArrayList<>(accounts.values());
     }
 
@@ -30,7 +30,7 @@ public class AccountDAOImplementation implements AccountDAO {
         if (!accounts.containsKey(id))
             throw new CustomException("Account with id " + id + " not found");
         if (logger.isDebugEnabled())
-            logger.debug(new Throwable().getStackTrace()[0].getMethodName() + "() " + accounts.get(id));
+            logger.debug(accounts.get(id));
         return accounts.get(id);
     }
 
@@ -40,7 +40,7 @@ public class AccountDAOImplementation implements AccountDAO {
         if (accounts.containsValue(account))
             throw new CustomException("Account " + account + " already exists");
         if (logger.isDebugEnabled())
-            logger.debug(new Throwable().getStackTrace()[0].getMethodName() + "() " + account);
+            logger.debug(account);
         accounts.put(account.getId(), account);
         return account;
     }
@@ -52,7 +52,7 @@ public class AccountDAOImplementation implements AccountDAO {
     public int deleteAccount(String id) throws CustomException {
         validateId(id);
         if (logger.isDebugEnabled())
-            logger.debug(new Throwable().getStackTrace()[0].getMethodName() + "() " + getAccount(id));
+            logger.debug(getAccount(id));
         synchronized (accounts) {
             accounts.remove(id);
         }
@@ -62,7 +62,7 @@ public class AccountDAOImplementation implements AccountDAO {
     public Account updateAccountBalance(String id, BigDecimal amount) throws CustomException {
         Account account = getAccount(id);
         if (logger.isDebugEnabled())
-            logger.debug(new Throwable().getStackTrace()[0].getMethodName() + "() " + account);
+            logger.debug(account);
         synchronized (account) {
             BigDecimal balance = account.getBalance().add(amount);
             account.setBalance(balance);

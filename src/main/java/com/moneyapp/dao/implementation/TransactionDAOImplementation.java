@@ -13,7 +13,7 @@ import static com.moneyapp.utils.Utils.*;
 public class TransactionDAOImplementation implements TransactionDAO {
 
     protected AccountDAOImplementation accountDAOImplementation;
-    private final static Logger logger = Logger.getLogger(new Throwable().getStackTrace()[0].getClassName().getClass());
+    private final static Logger logger = Logger.getLogger(TransactionDAOImplementation.class);
 
     public TransactionDAOImplementation(final AccountDAOImplementation accountDAOImplementation) {
         this.accountDAOImplementation = accountDAOImplementation;
@@ -31,12 +31,8 @@ public class TransactionDAOImplementation implements TransactionDAO {
         BigDecimal amount = transaction.getAmount();
         validateAmountLessThanOrEqualZero(amount);
 
-        if (logger.isDebugEnabled()) {
-            logger.debug(new Throwable().getStackTrace()[0].getMethodName()
-                    + "() fromAccount=" + fromAccount
-                    + " toAccount=" + toAccount
-                    + " amount=" + amount);
-        }
+        if (logger.isDebugEnabled())
+            logger.debug("fromAccount=" + fromAccount + " toAccount=" + toAccount + " amount=" + amount);
 
         synchronized (this) {
             BigDecimal fromAccountNewBalance = fromAccount.getBalance().subtract(amount);
@@ -49,7 +45,7 @@ public class TransactionDAOImplementation implements TransactionDAO {
 
     private void validateAmountLessThanZero(BigDecimal amount) {
         if (null == amount || amount.compareTo(BigDecimal.ZERO) < 0) {
-            logger.error(new Throwable().getStackTrace()[0].getMethodName() + "() Incorrect amount=" + amount);
+            logger.error("Incorrect amount=" + amount);
             throw new CustomException("Not enough amount on account");
         }
     }
